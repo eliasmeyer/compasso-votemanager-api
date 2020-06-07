@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController(value = "/sessions")
+@RestController(value = "/sessoes")
 @RequestMapping("v1")
 @Slf4j
 public class VoteManagerController {
