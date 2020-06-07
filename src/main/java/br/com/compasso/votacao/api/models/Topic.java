@@ -17,21 +17,21 @@ import org.springframework.data.annotation.CreatedDate;
 @Data
 @NoArgsConstructor
 @Entity
-@Table
+@Table(name = "Pauta")
 public class Topic {
   
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  @Column(length = 70, nullable = false)
+  @Column(name = "assunto", length = 70, nullable = false)
   private String title;
-  @Column(length = 300, nullable = false)
+  @Column(name = "descricao", length = 300, nullable = false)
   private String description;
   @CreatedDate
-  @Column(columnDefinition = "TIMESTAMP")
+  @Column(name = "criadoEm", columnDefinition = "TIMESTAMP")
   private LocalDateTime createdAt;
   @OneToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "id_result", referencedColumnName = "id")
+  @JoinColumn(name = "id_Resultado", referencedColumnName = "id")
   private Result result;
   
 }

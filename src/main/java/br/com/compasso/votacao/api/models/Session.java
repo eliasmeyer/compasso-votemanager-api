@@ -24,11 +24,12 @@ public class Session {
   @Id
   private Long id;
   @CreatedDate
-  @Column(columnDefinition = "TIMESTAMP")
+  @Column(name = "dataHoraAbertura", columnDefinition = "TIMESTAMP")
   private LocalDateTime dateTimeOpening;
-  @Column(columnDefinition = "TIMESTAMP")
+  @Column(name = "dataHoraFechamento", columnDefinition = "TIMESTAMP")
   private LocalDateTime dateTimeClosing;
   @Enumerated(EnumType.STRING)
+  @Column(name = "status")
   private StatusSession statusSession;
   @OneToOne(fetch = FetchType.LAZY)
   @MapsId

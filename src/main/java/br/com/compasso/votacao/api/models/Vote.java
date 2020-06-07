@@ -26,9 +26,10 @@ public class Vote {
   @JoinColumn(name = "id_Associado", nullable = false)
   private Associate associate;
   @Enumerated
+  @Column(name = "opcao")
   private OptionVotation optionVotation;
   @CreatedDate
-  @Column(columnDefinition = "TIMESTAMP")
+  @Column(name = "dataHoraVoto", columnDefinition = "TIMESTAMP")
   private LocalDateTime dateTimeVote;
   
   
