@@ -1,6 +1,7 @@
 package br.com.compasso.votacao.api.adapters;
 
 
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
@@ -20,6 +21,7 @@ public class SessionRequest {
   @NotEmpty(message = "Favor fornecer codigo da pauta")
   private Long idTopic;
   @Positive
+  @Min(value = 1L, message = "Valor minimo inferior a 1 minuto")
   private Long minuteTimeVoting;
   
   
