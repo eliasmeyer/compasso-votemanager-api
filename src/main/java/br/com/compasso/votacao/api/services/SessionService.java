@@ -9,12 +9,14 @@ import br.com.compasso.votacao.api.utils.Constants;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@Slf4j
 public class SessionService {
   
   @Autowired
@@ -44,10 +46,11 @@ public class SessionService {
   
   public Session create(Topic topic, Long optionalVotingTime)
       throws DataNotFoundException {
-    
+  
+    log.debug("Verificando regras de validacoes...");
     //Check if session exists
     this.existSession(topic.getId());
-    
+    log.debug("Criando sessao de votacao para pauta");
     Session newSession = new Session();
     LocalDateTime currentTime = LocalDateTime.now();
     
@@ -60,11 +63,12 @@ public class SessionService {
             plusMinutes(
                 Optional.ofNullable(optionalVotingTime).orElse(Constants.MINUTE_DEFAULT_SESSION)));
     newSession = sessionRepository.save(newSession);
-    
+    log.info("Sessao criada com sucesso!");
     return newSession;
   }
   
   public void changeStatusToProcessing() {
+    log.debug("Alterando status da sessao para contagem de votos");
     LocalDateTime localDateTime = LocalDateTime.now().withNano(Constants.NANO_OF_SECOND);
     List<Session> sessionsForComputing = sessionRepository
         .findAllWithDateTimeClosingAndStatusSessionOpen(localDateTime);

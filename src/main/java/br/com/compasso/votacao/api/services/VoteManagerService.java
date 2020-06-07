@@ -15,12 +15,14 @@ import br.com.compasso.votacao.api.repositories.TopicRepository;
 import br.com.compasso.votacao.api.repositories.VoteRepository;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional
+@Slf4j
 public class VoteManagerService {
   
   @Autowired
@@ -39,7 +41,7 @@ public class VoteManagerService {
    */
   public Session openSession(Long idTopic, Long optionalVotingTime)
       throws DataNotFoundException {
-    
+    log.info("Abrindo sessao de votacao para pauta de codigo {[]}", idTopic);
     Topic topic = topicRepository.findById(idTopic).orElseThrow(() -> new DataNotFoundException());
     return sessionService.create(topic, optionalVotingTime);
   }
@@ -48,10 +50,10 @@ public class VoteManagerService {
    * Selects sessions to count votes and finalize
    */
   public void computeAndClose() {
-    
+    log.info("Inicio do processo de fechamento da sessão e contagem de votos");
     sessionService.changeStatusToProcessing();
     List<Session> sessionProcessing = sessionService.getCurrentSessionsToProcess();
-    
+    log.debug("Preparando contagem dos votos");
     sessionProcessing
         .parallelStream()
         .forEach(currentSession -> {
@@ -59,6 +61,7 @@ public class VoteManagerService {
           currentSession.getTopic().setResult(result);
           currentSession.setStatusSession(StatusSession.FECHADO);
         });
+    log.debug("Encerrando sessoes");
     sessionService.saveAll(sessionProcessing);
   }
   
@@ -67,13 +70,14 @@ public class VoteManagerService {
    */
   public Vote vote(Long idAssociate, Long idSession, OptionVotation choiceOfVote)
       throws DataNotFoundException, VoteAlreadyRegisteredException, VotingTimeExpiredException {
-    
+    log.info("Registrando voto do associado {[]} na sessao {[]}", idAssociate, idSession);
     Associate elector = associateRepository.findById(idAssociate)
         .orElseThrow(DataNotFoundException::new);
     Session session = sessionService.findById(idSession).orElseThrow(DataNotFoundException::new);
     Optional<Vote> optionalVote = voteRepository.findBySessionAndAssociate(session, elector);
     
     if (optionalVote.isPresent()) {
+      log.error("ASSOCIADO JA REGISTROU VOTO NA SESSAO!");
       throw new VoteAlreadyRegisteredException();
     }
     
@@ -84,7 +88,9 @@ public class VoteManagerService {
     
     if (sessionService.isOpen(session)) {
       voteRepository.save(vote);
+      log.info("Voto registrado");
     } else {
+      log.error("TEMPO DE VOTACAO EXPIRADO!");
       throw new VotingTimeExpiredException();
     }
     
