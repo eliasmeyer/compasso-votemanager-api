@@ -1,5 +1,6 @@
 package br.com.compasso.votacao.api.adapters;
 
+import br.com.compasso.votacao.api.controllers.validation.EnunNamePattern;
 import br.com.compasso.votacao.api.enums.OptionVotation;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Positive;
@@ -17,6 +18,6 @@ public class VoteRequest {
   @Positive
   @NotEmpty(message = "Favor informar codigo do associado")
   private Long idAssociate;
-  @NotEmpty(message = "Favor informar escolha do voto")
+  @EnunNamePattern(regexp = "SIM|NAO")
   private OptionVotation choiceOfVote;
 }
