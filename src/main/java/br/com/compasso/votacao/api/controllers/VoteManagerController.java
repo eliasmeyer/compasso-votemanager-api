@@ -39,8 +39,8 @@ public class VoteManagerController {
   public ResponseEntity<List<SessionResponse>> findAll() {
     log.info("Request all Sessions");
     List<Session> sessions = sessionService.findAll();
-    List<SessionResponse> sessionResponses = sessionMapper.toSessionResponses(sessions);
-    log.info("Returning Sessions");
+    List<SessionResponse> sessionResponses = sessionMapper.from(sessions);
+    log.info("Returning all Sessions");
     return ResponseEntity.ok(sessionResponses);
   }
   
@@ -54,7 +54,7 @@ public class VoteManagerController {
     Session session = voteManagerService
         .openSession(sessionRequest.getIdTopic(), sessionRequest.getMinuteTimeVoting());
     log.debug("Mapping Session {} to Response", session);
-    SessionResponse response = sessionMapper.toSessionResponse(session);
+    SessionResponse response = sessionMapper.from(session);
     
     log.info("Session opened {}", response);
     return ResponseEntity.ok(response);
