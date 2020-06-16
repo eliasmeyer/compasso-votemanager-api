@@ -2,7 +2,7 @@ package br.com.compasso.votacao.api.adapters;
 
 
 import javax.validation.constraints.Min;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,10 +18,10 @@ import lombok.ToString;
 public class SessionRequest {
   
   @Positive
-  @NotEmpty(message = "Favor fornecer codigo da pauta")
+  @NotNull(message = "Id Topic is null")
   private Long idTopic;
   @Positive
-  @Min(value = 1L, message = "Valor minimo inferior a 1 minuto")
+  @Min(value = 1L, message = "Value minuteTimeVoting is invalid")
   private Long minuteTimeVoting;
   
   
