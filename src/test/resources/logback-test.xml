@@ -1,13 +1,13 @@
 <configuration>
-  <include resource="/org/springframework/boot/logging/logback/base.xml"/>
-  <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+  <appender class="ch.qos.logback.core.ConsoleAppender" name="STDOUT">
     <encoder>
       <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n
       </pattern>
     </encoder>
   </appender>
+  <include resource="/org/springframework/boot/logging/logback/base.xml"/>
+  <logger level="debug" name="br.com.compasso"/>
   <root level="debug">
     <appender-ref ref="STDOUT"/>
   </root>
-  <logger name="br.com.compasso" level="debug"/>
 </configuration>
