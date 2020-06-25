@@ -9,7 +9,7 @@ import org.mapstruct.Mapper;
 public interface TopicMapper {
   
   //@Mapping(target = "createdAt", source = "createdAt", dateFormat = "yyyy-MM-dd HH:mm:ss")
-  TopicResponse from(Topic Topic);
+  TopicResponse from(Topic topic);
   
   List<TopicResponse> from(List<Topic> session);
   

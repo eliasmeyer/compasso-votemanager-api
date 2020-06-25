@@ -10,13 +10,13 @@ public class ValidationSessionService {
   
   @Autowired
   @Qualifier("validationVoteInRangeDateTime")
-  private ValidationCondition validationVoteInRangeDateTime;
+  private ValidationCondition<Session> validationVoteInRangeDateTime;
   @Autowired
   @Qualifier("validationSessionIsOpen")
-  private ValidationCondition validationSessionIsOpen;
+  private ValidationCondition<Session> validationSessionIsOpen;
   @Autowired
   @Qualifier("validationAssociateIsAble")
-  private ValidationCondition validationAssociateIsAble;
+  private ValidationCondition<String> validationAssociateIsAble;
   
   
   public void validate(Session session, String cpfNumber) throws Exception {

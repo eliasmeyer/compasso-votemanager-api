@@ -3,6 +3,7 @@ package br.com.compasso.votacao.api.utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -39,12 +40,15 @@ public class CPFUtils {
   }
   
   List<Integer> generateRandomBody() {
-    IntStream intStream = IntStream
-        .generate(() -> {
-          return (int) (Math.random() * NUMBER_TO_TEN);
-        });
-    List<Integer> randomNumbers = intStream.limit(SIZE_PARTIAL_CPF).boxed()
-        .collect(Collectors.toList());
+    ThreadLocalRandom generator = ThreadLocalRandom.current();
+    List<Integer> randomNumbers;
+    try (IntStream intStream = IntStream
+        .generate(() ->
+            generator.nextInt(NUMBER_TO_TEN)
+        )) {
+      randomNumbers = intStream.limit(SIZE_PARTIAL_CPF).boxed()
+          .collect(Collectors.toList());
+    }
     return randomNumbers;
   }
   
@@ -69,9 +73,8 @@ public class CPFUtils {
   public static String createNumberCpf() {
     CPFUtils utils = new CPFUtils();
     List<Integer> numbersCpf = utils.doGenerate();
-    final String stringCpf = numbersCpf.stream().map(i -> Integer.toString(i))
+    return numbersCpf.stream().map(i -> Integer.toString(i))
         .reduce(SPLIT_CHARACTER, String::concat);
-    return stringCpf;
   }
   
   public static boolean isValid(final String numberCpf) {
@@ -99,10 +102,7 @@ public class CPFUtils {
     
     int secondDigitCalculate = utils
         .calculateDigitVerifier(listNumbersCpf.subList(ZERO, INDEX_SECOND_DIGIT_VERIFIER));
-    if (secondDigit != secondDigitCalculate) {
-      return false;
-    }
-    
-    return true;
+  
+    return (secondDigit != secondDigitCalculate);
   }
 }

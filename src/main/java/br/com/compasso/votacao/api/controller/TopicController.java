@@ -9,7 +9,6 @@ import java.util.List;
 import javax.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -40,7 +39,7 @@ public class TopicController {
   
   @GetMapping("/{id}")
   public TopicResponse findById(@PathVariable("id") Long id)
-      throws ResourceNotFoundException, DataNotFoundException {
+      throws DataNotFoundException {
     return topicMapper.from(topicService.findById(id)
         .orElseThrow(() -> new DataNotFoundException("Topic not found on " + id)));
   }

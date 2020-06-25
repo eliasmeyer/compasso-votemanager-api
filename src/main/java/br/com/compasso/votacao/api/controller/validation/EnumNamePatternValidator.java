@@ -9,7 +9,7 @@ import javax.validation.ConstraintValidatorContext;
 public class EnumNamePatternValidator implements ConstraintValidator<EnunNamePattern, Enum<?>> {
   
   private Pattern pattern;
-  
+  @Override
   public void initialize(EnunNamePattern annotation) {
     try {
       pattern = Pattern.compile(annotation.regexp());
