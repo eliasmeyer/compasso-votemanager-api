@@ -88,10 +88,12 @@ class VoteServiceIT {
       Vote vote = HelperTest.createVote(session, "12345678901", OptionVotation.SIM);
       given(sessionService.findById(1L))
           .willReturn(Optional.of(session));
-      
+      given(voteRepository.findBySessionAndCpfNumber(session, "12345678901"))
+          .willReturn(Optional.of(vote));
+  
       //when
       Vote expected = voteService.findBySessionIdAndCpfNumber(1L, "12345678901");
-      
+  
       //then
       assertThat(expected).isNotNull();
       then(voteRepository).should(times(1))
@@ -146,7 +148,7 @@ class VoteServiceIT {
       Session session = HelperTest.createSession(1L, 1L);
       Vote vote = HelperTest.createVote(session, "12345678901", OptionVotation.SIM);
       given(voteRepository.findBySessionAndCpfNumber(session, "12345678901"))
-          .willReturn(Optional.of(vote));
+          .willReturn(Optional.empty());
       
       given(voteRepository.save(any(Vote.class)))
           .willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
@@ -170,9 +172,6 @@ class VoteServiceIT {
       Vote vote = HelperTest.createVote(session, "12345678901", OptionVotation.SIM);
       given(voteRepository.findBySessionAndCpfNumber(session, "12345678901"))
           .willReturn(Optional.of(vote));
-      
-      given(voteRepository.save(any(Vote.class)))
-          .willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
       
       //when
       try {

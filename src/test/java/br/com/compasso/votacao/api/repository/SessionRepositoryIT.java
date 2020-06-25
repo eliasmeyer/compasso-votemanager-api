@@ -45,7 +45,7 @@ public class SessionRepositoryIT {
     
     //when
     List<Session> founds = sessionRepository
-        .findAllThatPrecedesDateTimeClosingAndStatusEqualOpen(localDateTime.withNano(0));
+        .findAllThatPrecedesDateTimeClosingAndStatusEqualOpen(LocalDateTime.now());
     
     //then
     assertThat(founds).hasAtLeastOneElementOfType(Session.class);
