@@ -103,6 +103,6 @@ public class CPFUtils {
     int secondDigitCalculate = utils
         .calculateDigitVerifier(listNumbersCpf.subList(ZERO, INDEX_SECOND_DIGIT_VERIFIER));
   
-    return (secondDigit != secondDigitCalculate);
+    return (secondDigit == secondDigitCalculate);
   }
 }
