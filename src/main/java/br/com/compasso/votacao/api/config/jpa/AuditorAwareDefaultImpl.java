@@ -1,4 +1,4 @@
-package br.com.compasso.votacao.api.config;
+package br.com.compasso.votacao.api.config.jpa;
 
 import java.util.Optional;
 import org.springframework.data.domain.AuditorAware;

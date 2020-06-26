@@ -1,4 +1,4 @@
-package br.com.compasso.votacao.api.config;
+package br.com.compasso.votacao.api.config.log;
 
 import java.util.UUID;
 import javax.servlet.http.HttpServletRequest;
