@@ -21,7 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ResultServiceIT {
+class ResultServiceTest {
   
   @Mock
   private TopicRepository topicRepository;

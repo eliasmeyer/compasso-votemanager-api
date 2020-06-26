@@ -1,7 +1,7 @@
 package br.com.compasso.votacao.api.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -24,7 +24,7 @@ import br.com.compasso.votacao.api.model.Result;
 import br.com.compasso.votacao.api.model.Session;
 import br.com.compasso.votacao.api.model.Topic;
 import br.com.compasso.votacao.api.repository.SessionRepository;
-import br.com.compasso.votacao.api.service.validation.ValidationSessionService;
+import br.com.compasso.votacao.api.service.verifier.VerifierOnSession;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -38,14 +38,14 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class ManagerSessionServiceIT {
+class ManagerSessionServiceTest {
   
   @Mock
   private VoteService voteService;
   @Mock
   private ResultService resultService;
   @Mock
-  private ValidationSessionService validationSessionService;
+  private VerifierOnSession verifierOnSession;
   @Mock
   private SessionRepository sessionRepository;
   @InjectMocks
@@ -82,14 +82,13 @@ class ManagerSessionServiceIT {
       //given
       Topic topic = HelperTest.createTopic(1L, "Title 1#", "Description #1");
       given(sessionRepository.findById(1L)).willReturn(Optional.of(new Session()));
-      
+  
       //when
-      try {
-        managerSessionService.doOpen(topic, 1L);
-        fail("Should throw exception TopicWithExistingSessionException");
-      } catch (TopicWithExistingSessionException e) {
-      }
-      
+      assertThatExceptionOfType(TopicWithExistingSessionException.class)
+          .isThrownBy(() -> {
+            managerSessionService.doOpen(topic, 1L);
+          });
+  
       //then
       then(sessionRepository)
           .should(never())
@@ -101,7 +100,7 @@ class ManagerSessionServiceIT {
     void testShouldVoteSuccessfully() throws Exception {
       //given
       Session session = HelperTest.createSession(1L, 1L);
-      willDoNothing().given(validationSessionService).validate(any(Session.class), anyString());
+      willDoNothing().given(verifierOnSession).validate(any(Session.class), anyString());
       
       //when
       managerSessionService.onVote(session, "12345678901", OptionVotation.SIM);
@@ -117,16 +116,16 @@ class ManagerSessionServiceIT {
       //given
       Session session = HelperTest.createSession(1L, 1L);
       session.setStatusSession(StatusSession.FECHADO);
-      
-      willThrow(VotingTimeSessionExpiredException.class).given(validationSessionService)
+  
+      willThrow(VotingTimeSessionExpiredException.class).given(verifierOnSession)
           .validate(any(Session.class), anyString());
-      
-      //when
-      try {
-        managerSessionService.onVote(session, "12345678901", OptionVotation.SIM);
-      } catch (VotingTimeSessionExpiredException e) {
-      }
-      
+  
+      //when      
+      assertThatExceptionOfType(VotingTimeSessionExpiredException.class)
+          .isThrownBy(() -> {
+            managerSessionService.onVote(session, "12345678901", OptionVotation.SIM);
+          });
+  
       //then
       then(voteService)
           .should(never())

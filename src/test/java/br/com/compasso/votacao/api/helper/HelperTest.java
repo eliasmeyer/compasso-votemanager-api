@@ -1,5 +1,6 @@
 package br.com.compasso.votacao.api.helper;
 
+import br.com.compasso.votacao.api.adapter.TopicRequest;
 import br.com.compasso.votacao.api.enums.OptionVotation;
 import br.com.compasso.votacao.api.enums.StatusSession;
 import br.com.compasso.votacao.api.model.Result;
@@ -9,14 +10,24 @@ import br.com.compasso.votacao.api.model.Vote;
 import br.com.compasso.votacao.api.utils.CPFUtils;
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * Class Helper for test
  */
 public class HelperTest {
   
+  ThreadLocalRandom random = ThreadLocalRandom.current();
+  
   public static String generateCpf() {
     return CPFUtils.createNumberCpf();
+  }
+  
+  public static TopicRequest createTopicRequest(String title, String description) {
+    TopicRequest topicRequest = new TopicRequest();
+    topicRequest.setTitle(title);
+    topicRequest.setDescription(description);
+    return topicRequest;
   }
   
   public static Topic createTopic(Long id, String title, String description) {
@@ -24,6 +35,7 @@ public class HelperTest {
     topic.setId(id);
     topic.setTitle(title);
     topic.setDescription(description);
+    topic.setCreatedAt(LocalDateTime.now());
     return topic;
   }
   
