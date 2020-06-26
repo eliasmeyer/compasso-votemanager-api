@@ -1,4 +1,4 @@
-package br.com.compasso.votacao.api.service.validation;
+package br.com.compasso.votacao.api.service.verifier;
 
 import br.com.compasso.votacao.api.exception.VotingTimeSessionExpiredException;
 import br.com.compasso.votacao.api.model.Session;
@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import org.springframework.stereotype.Component;
 
 @Component("validationVoteInRangeDateTime")
-class ValidationVoteInRangeDateTime implements ValidationCondition<Session> {
+class VerifierSessionExpired implements VerifierCondition<Session> {
   
   @Override
   public void isOk(Session session) throws VotingTimeSessionExpiredException {

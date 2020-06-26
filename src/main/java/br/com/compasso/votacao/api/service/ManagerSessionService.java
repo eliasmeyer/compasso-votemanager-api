@@ -7,7 +7,7 @@ import br.com.compasso.votacao.api.model.Result;
 import br.com.compasso.votacao.api.model.Session;
 import br.com.compasso.votacao.api.model.Topic;
 import br.com.compasso.votacao.api.repository.SessionRepository;
-import br.com.compasso.votacao.api.service.validation.ValidationSessionService;
+import br.com.compasso.votacao.api.service.verifier.VerifierOnSession;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -29,7 +29,7 @@ class ManagerSessionService {
   @Autowired
   private SessionRepository sessionRepository;
   @Autowired
-  private ValidationSessionService validationSessionService;
+  private VerifierOnSession verifierOnSession;
   
   protected Session doOpen(Topic topic, Long optionalVotingTime)
       throws TopicWithExistingSessionException {
@@ -54,8 +54,8 @@ class ManagerSessionService {
   
   protected void onVote(Session session, String numberCpf, OptionVotation choice)
       throws Exception {
-    
-    validationSessionService.validate(session, numberCpf);
+  
+    verifierOnSession.validate(session, numberCpf);
     voteService.register(session, numberCpf, choice);
   }
   

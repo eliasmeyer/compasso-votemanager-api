@@ -1,4 +1,4 @@
-package br.com.compasso.votacao.api.service.validation;
+package br.com.compasso.votacao.api.service.verifier;
 
 import br.com.compasso.votacao.api.enums.StatusToVote;
 import br.com.compasso.votacao.api.exception.AssociateUnableForVotingException;
@@ -9,7 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("validationAssociateIsAble")
-class ValidationAssociateIsAble implements ValidationCondition<String> {
+class VerifyIfAssociateIsAble implements VerifierCondition<String> {
   
   @Autowired
   private AssociateService associateService;

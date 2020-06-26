@@ -1,4 +1,4 @@
-package br.com.compasso.votacao.api.service.validation;
+package br.com.compasso.votacao.api.service.verifier;
 
 import br.com.compasso.votacao.api.model.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,17 +6,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 @Service
-public class ValidationSessionService {
+public class VerifierOnSession {
   
   @Autowired
   @Qualifier("validationVoteInRangeDateTime")
-  private ValidationCondition<Session> validationVoteInRangeDateTime;
+  private VerifierCondition<Session> validationVoteInRangeDateTime;
   @Autowired
   @Qualifier("validationSessionIsOpen")
-  private ValidationCondition<Session> validationSessionIsOpen;
+  private VerifierCondition<Session> validationSessionIsOpen;
   @Autowired
   @Qualifier("validationAssociateIsAble")
-  private ValidationCondition<String> validationAssociateIsAble;
+  private VerifierCondition<String> validationAssociateIsAble;
   
   
   public void validate(Session session, String cpfNumber) throws Exception {

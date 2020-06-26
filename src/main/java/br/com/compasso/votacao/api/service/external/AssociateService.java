@@ -27,16 +27,12 @@ public class AssociateService {
   
   public AssociateResponse isAbleToVote(final String numberCpf) {
     try {
-      Optional<AssociateResponse> response = Optional.ofNullable(
+      return Optional.ofNullable(
           restTemplate.getForObject(
               URI_REST,
               AssociateResponse.class,
               numberCpf)
-      );
-      if (!response.isPresent()) {
-        throw new ExternalServiceUnavailableException("Response body is null!");
-      }
-      return response.get();
+      ).orElseThrow(() -> new ExternalServiceUnavailableException("Response body is null!"));
     } catch (HttpClientErrorException ex) {
       if (ex.getStatusCode() == HttpStatus.NOT_FOUND) {
         throw new InvalidCpfNumberException("CPF number is invalid!");
