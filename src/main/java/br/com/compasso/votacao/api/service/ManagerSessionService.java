@@ -11,10 +11,12 @@ import br.com.compasso.votacao.api.service.verifier.VerifierOnSession;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Service
 @Transactional
 class ManagerSessionService {
@@ -54,16 +56,22 @@ class ManagerSessionService {
   
   protected void onVote(Session session, String numberCpf, OptionVotation choice)
       throws Exception {
-  
+    
     verifierOnSession.validate(session, numberCpf);
     voteService.register(session, numberCpf, choice);
   }
   
   protected void onClose() {
+    log.info("Harvesting sessions for computer");
     LocalDateTime localDateTime = LocalDateTime.now().withNano(ZERO_NANO_OF_SECOND);
     List<Session> sessionsToComputer = sessionRepository
         .findAllThatPrecedesDateTimeClosingAndStatusEqualOpen(localDateTime);
     
+    if (sessionsToComputer.isEmpty()) {
+      log.info("No session to process!");
+      return;
+    }
+    log.info("Found [{}] Sessions to computer", sessionsToComputer.size());
     sessionsToComputer.parallelStream().forEach(s -> s.setStatusSession(StatusSession.APURANDO));
     sessionRepository.saveAll(sessionsToComputer);
     sessionRepository.flush();
@@ -72,11 +80,13 @@ class ManagerSessionService {
         .parallelStream()
         .forEach(currentSession -> {
           List<Result> results = voteService.countBySession(currentSession);
-          resultService.save(currentSession.getTopic(), results);
+          Result result = resultService.computer(currentSession.getTopic(), results);
+          currentSession.getTopic().setResult(result);
           currentSession.setStatusSession(StatusSession.FECHADO);
         });
     
     sessionRepository.saveAll(sessionsToComputer);
+    log.info("Sessions successfully closed");
     //TODO POSTING RESULT IN MESSAGE QUEUE 
   }
 }

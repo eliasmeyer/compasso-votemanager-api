@@ -30,6 +30,7 @@ public class SessionService {
   @Transactional(readOnly = true)
   public Optional<Session> findById(Long id) {
     Objects.requireNonNull(id);
+    log.info("Receive with id [{}]", id);
     return sessionRepository.findById(id);
   }
   
@@ -56,11 +57,13 @@ public class SessionService {
   }
   
   public void close() {
+    log.debug("Starting harvest sessions to computer...");
     managerSessionService.onClose();
   }
   
   public void vote(Long sessionId, String cpf, OptionVotation choice)
       throws Exception {
+    log.info("Receive vote with params: session_id [{}], cpf [{}]", sessionId, cpf);
     Objects.requireNonNull(sessionId);
     Objects.requireNonNull(cpf);
     Objects.requireNonNull(choice);
