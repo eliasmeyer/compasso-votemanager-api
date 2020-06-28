@@ -14,8 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
+@ActiveProfiles("test")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import(JpaConfig.class)
@@ -35,20 +37,20 @@ public class SessionRepositoryIT {
     topic.setTitle("Topic test - Query Sessions");
     topic.setDescription("Query findAllThatPrecedesDateTimeClosingAndStatusEqualOpen");
     topic = topicRepository.save(topic);
-  
+    
     Session session = new Session();
     LocalDateTime localDateTime = LocalDateTime.now();
     session.setTopic(topic);
     session.setDateTimeOpening(localDateTime.minusMinutes(3L));
     session.setDateTimeClosing(localDateTime.minusMinutes(1L));
     session.setStatusSession(StatusSession.ABERTO);
-  
+    
     Session inserted = sessionRepository.save(session);
-  
+    
     //when
     List<Session> founds = sessionRepository
         .findAllThatPrecedesDateTimeClosingAndStatusEqualOpen(localDateTime);
-  
+    
     //then
     assertThat(founds).hasAtLeastOneElementOfType(Session.class);
     for (Session currentSession : founds) {
