@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping(
+@RequestMapping(value = "/sessions",
     consumes = MediaType.APPLICATION_JSON_VALUE,
     produces = MediaType.APPLICATION_JSON_VALUE)
 @Slf4j
@@ -33,25 +33,25 @@ public class SessionController {
   @Autowired
   private SessionMapper sessionMapper;
   
-  @GetMapping("/sessions")
+  @GetMapping
   public List<SessionResponse> findAll() {
     return sessionMapper.from(sessionService.findAll());
   }
   
-  @GetMapping("/sessions/{id}")
+  @GetMapping("/{id}")
   public SessionResponse findById(@PathVariable("id") Long id) throws DataNotFoundException {
     return sessionMapper.from(sessionService.findById(id)
         .orElseThrow(
-            () -> new DataNotFoundException("Associate not found on " + id)));
+            () -> new DataNotFoundException("Session not found on " + id)));
   }
   
-  @GetMapping("/sessions/status")
+  @GetMapping("/status")
   public List<SessionResponse> findByStatus(
       @RequestParam(name = "status") StatusSession statusSession) {
     return sessionMapper.from(sessionService.findAllByStatusSession(statusSession));
   }
   
-  @PostMapping("/sessions")
+  @PostMapping
   public SessionResponse create(@Valid @RequestBody SessionRequest sessionRequest)
       throws TopicWithExistingSessionException, DataNotFoundException {
     return sessionMapper
@@ -59,7 +59,7 @@ public class SessionController {
             sessionService.open(sessionRequest.getTopicId(), sessionRequest.getMinuteTimeVoting()));
   }
   
-  @PostMapping("/sessions/{id}/votes")
+  @PostMapping("/{id}/votes")
   public void vote(@PathVariable("id") Long id, @Valid @RequestBody VoteRequest voteRequest)
       throws Exception {
     sessionService
