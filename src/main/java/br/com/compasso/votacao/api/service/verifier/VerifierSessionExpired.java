@@ -20,6 +20,6 @@ class VerifierSessionExpired implements VerifierCondition<Session> {
         || dateTimeVote.isAfter(session.getDateTimeClosing())) {
       throw new VotingTimeSessionExpiredException("Voting Time expired on session!");
     }
-    log.info("Session [{}] not yet expired");
+    log.info("Session [{}] not yet expired", session.getId());
   }
 }

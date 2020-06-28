@@ -35,27 +35,27 @@ public class SessionRepositoryIT {
     topic.setTitle("Topic test - Query Sessions");
     topic.setDescription("Query findAllThatPrecedesDateTimeClosingAndStatusEqualOpen");
     topic = topicRepository.save(topic);
-    
+  
     Session session = new Session();
     LocalDateTime localDateTime = LocalDateTime.now();
     session.setTopic(topic);
-    session.setDateTimeOpening(localDateTime.withNano(0));
-    session.setDateTimeClosing(localDateTime.plusMinutes(2L).withNano(0));
+    session.setDateTimeOpening(localDateTime.minusMinutes(3L));
+    session.setDateTimeClosing(localDateTime.minusMinutes(1L));
     session.setStatusSession(StatusSession.ABERTO);
-    
+  
     Session inserted = sessionRepository.save(session);
-//    sessionRepository.flush();
-    
+  
     //when
     List<Session> founds = sessionRepository
-        .findAllThatPrecedesDateTimeClosingAndStatusEqualOpen(LocalDateTime.now());
-    
+        .findAllThatPrecedesDateTimeClosingAndStatusEqualOpen(localDateTime);
+  
     //then
     assertThat(founds).hasAtLeastOneElementOfType(Session.class);
     for (Session currentSession : founds) {
-      assertThat(currentSession.getDateTimeOpening()).isEqualTo(inserted.getDateTimeOpening());
+      assertThat(currentSession.getDateTimeOpening())
+          .isEqualTo(inserted.getDateTimeOpening());
       assertThat(currentSession.getStatusSession()).isEqualTo(StatusSession.ABERTO);
-      assertThat(currentSession.getDateTimeClosing()).isAfter(localDateTime);
+      assertThat(currentSession.getDateTimeClosing()).isBefore(localDateTime);
     }
   }
   

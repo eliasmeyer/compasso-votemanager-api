@@ -22,12 +22,6 @@ public class AssociateService {
   
   public AssociateResponse isAbleToVote(final String numberCpf) {
     log.debug("Checking cpf [{}] on EXTERNAL API", numberCpf);
-  
-    restTemplate.getForObject(
-        URI_REST,
-        AssociateResponse.class,
-        numberCpf);
-  
     try {
       return Optional.ofNullable(
           restTemplate.getForObject(

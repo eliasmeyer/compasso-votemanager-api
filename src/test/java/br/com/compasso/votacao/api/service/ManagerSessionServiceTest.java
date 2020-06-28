@@ -152,7 +152,7 @@ class ManagerSessionServiceTest {
           .saveAll(sessions))
           .willAnswer(invocationOnMock -> invocationOnMock.getArgument(0));
       given(voteService.countBySession(session)).willReturn(results);
-      given(resultService.save(session.getTopic(), results))
+      given(resultService.computer(session.getTopic(), results))
           .willReturn(result);
       willDoNothing().given(sessionRepository).flush();
       
@@ -176,7 +176,7 @@ class ManagerSessionServiceTest {
           .countBySession(session);
       then(resultService)
           .should(times(1))
-          .save(any(Topic.class), eq(results));
+          .computer(any(Topic.class), eq(results));
     }
   }
 }

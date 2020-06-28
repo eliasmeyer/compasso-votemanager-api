@@ -18,12 +18,12 @@ class VerifyIfAssociateIsAble implements VerifierCondition<String> {
   
   @Override
   public void isOk(String numberCpf) {
-    log.debug("Checking if cpf [{}] is able...");
+    log.debug("Checking if cpf [{}] is able...", numberCpf);
     AssociateResponse response = associateService.isAbleToVote(numberCpf);
     log.debug("ASSOCIATE RESPONSE : [{}]", response);
     if (!(Objects.equals(response.getStatus(), StatusToVote.ABLE_TO_VOTE.toString()))) {
       throw new AssociateUnableForVotingException("Associate unable for voting");
     }
-    log.info("CPF [{}] able to vote!");
+    log.info("CPF [{}] able to vote!", numberCpf);
   }
 }

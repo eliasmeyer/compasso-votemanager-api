@@ -17,11 +17,10 @@ import lombok.ToString;
 @NoArgsConstructor
 public class SessionRequest {
   
-  @Positive
-  @NotNull(message = "Topic ID is null")
+  @Positive(message = "topicId should be positive number")
+  @NotNull(message = "TopicId can't be null")
   private Long topicId;
-  @Positive
-  @Min(value = 1L, message = "Value minuteTimeVoting is invalid")
+  @Min(value = 1L, message = "Value minuteTimeVoting should be greater than 1")
   private Long minuteTimeVoting;
   
   

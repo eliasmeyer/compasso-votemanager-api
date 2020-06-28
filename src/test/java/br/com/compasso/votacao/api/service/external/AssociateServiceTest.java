@@ -17,10 +17,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(MockitoExtension.class)
@@ -30,7 +27,7 @@ class AssociateServiceTest {
   private RestTemplate restTemplate;
   @InjectMocks
   private AssociateService associateService;
-  private static String URI_REST = "https://user-info.herokuapp.com/users/{cpf}";
+  private static final String URI_REST = "https://user-info.herokuapp.com/users/{cpf}";
   
   @BeforeEach
   public void setUp() {
@@ -67,10 +64,7 @@ class AssociateServiceTest {
   @Test
   @DisplayName("Call External with Cpf wrong")
   void testShouldCallAPIWithCpfWrong() {
-    HttpClientErrorException error = HttpClientErrorException
-        .create(HttpStatus.NOT_FOUND, "Not Found", HttpHeaders.EMPTY, null, null);
-    
-    willThrow(error)
+    willThrow(new InvalidCpfNumberException("Error"))
         .given(restTemplate).getForObject(URI_REST, AssociateResponse.class, "99999999999");
     
     Throwable throwable = catchThrowable(() -> associateService.isAbleToVote("99999999999"));
@@ -82,11 +76,7 @@ class AssociateServiceTest {
   @Test
   @DisplayName("External API has Error")
   void testShouldThrowErrorAPIHasError() {
-    HttpClientErrorException error = HttpClientErrorException
-        .create(HttpStatus.INTERNAL_SERVER_ERROR, "Internal Server Error", HttpHeaders.EMPTY, null,
-            null);
-    
-    willThrow(error)
+    willThrow(new ExternalServiceUnavailableException("Error"))
         .given(restTemplate).getForObject(URI_REST, AssociateResponse.class, "99999999999");
     
     Throwable throwable = catchThrowable(() -> associateService.isAbleToVote("99999999999"));
