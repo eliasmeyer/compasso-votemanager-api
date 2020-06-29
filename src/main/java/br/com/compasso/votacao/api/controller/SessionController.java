@@ -5,7 +5,6 @@ import br.com.compasso.votacao.api.adapter.SessionResponse;
 import br.com.compasso.votacao.api.adapter.VoteRequest;
 import br.com.compasso.votacao.api.enums.StatusSession;
 import br.com.compasso.votacao.api.exception.DataNotFoundException;
-import br.com.compasso.votacao.api.exception.TopicWithExistingSessionException;
 import br.com.compasso.votacao.api.mapper.SessionMapper;
 import br.com.compasso.votacao.api.service.SessionService;
 import java.util.List;
@@ -39,7 +38,7 @@ public class SessionController {
   }
   
   @GetMapping("/{id}")
-  public SessionResponse findById(@PathVariable("id") Long id) throws DataNotFoundException {
+  public SessionResponse findById(@PathVariable("id") Long id) {
     return sessionMapper.from(sessionService.findById(id)
         .orElseThrow(
             () -> new DataNotFoundException("Session not found on " + id)));
@@ -52,8 +51,7 @@ public class SessionController {
   }
   
   @PostMapping
-  public SessionResponse create(@Valid @RequestBody SessionRequest sessionRequest)
-      throws TopicWithExistingSessionException, DataNotFoundException {
+  public SessionResponse create(@Valid @RequestBody SessionRequest sessionRequest) {
     return sessionMapper
         .from(
             sessionService.open(sessionRequest.getTopicId(), sessionRequest.getMinuteTimeVoting()));

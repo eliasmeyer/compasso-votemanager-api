@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 @Component("verifyIfAssociateIsAble")
 @Slf4j
-class VerifyIfAssociateIsAble implements VerifierCondition<String> {
+class VerifierAssociateIsAble implements VerifierCondition<String> {
   
   @Autowired
   private AssociateService associateService;

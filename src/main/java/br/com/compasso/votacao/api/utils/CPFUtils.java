@@ -1,9 +1,9 @@
 package br.com.compasso.votacao.api.utils;
 
+import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -11,16 +11,16 @@ import java.util.stream.Stream;
 
 public class CPFUtils {
   
-  private static int ZERO = 0;
-  private static int ONE = 1;
-  private static int NUMBER_TO_TEN = 10;
+  private static final int ZERO = 0;
+  private static final int ONE = 1;
+  private static final int NUMBER_TO_TEN = 10;
   //Body CPF - without digits
-  private static int SIZE_PARTIAL_CPF = 9; //Body field CPF
-  private static int FACTOR_TO_CALCULATE = 2;
-  private static int CAPACITY_MAX_NUMBER_CPF = 11;
-  private static int INDEX_FIRST_DIGIT_VERIFIER = 9;
-  private static int INDEX_SECOND_DIGIT_VERIFIER = 10;
-  private static String SPLIT_CHARACTER = "";
+  private static final int SIZE_PARTIAL_CPF = 9; //Body field CPF
+  private static final int FACTOR_TO_CALCULATE = 2;
+  private static final int CAPACITY_MAX_NUMBER_CPF = 11;
+  private static final int INDEX_FIRST_DIGIT_VERIFIER = 9;
+  private static final int INDEX_SECOND_DIGIT_VERIFIER = 10;
+  private static final String SPLIT_CHARACTER = "";
   
   //Private constructor
   private CPFUtils() {
@@ -40,11 +40,11 @@ public class CPFUtils {
   }
   
   List<Integer> generateRandomBody() {
-    ThreadLocalRandom generator = ThreadLocalRandom.current();
+    SecureRandom secureRandom = new SecureRandom();
     List<Integer> randomNumbers;
     try (IntStream intStream = IntStream
         .generate(() ->
-            generator.nextInt(NUMBER_TO_TEN)
+            secureRandom.nextInt(NUMBER_TO_TEN)
         )) {
       randomNumbers = intStream.limit(SIZE_PARTIAL_CPF).boxed()
           .collect(Collectors.toList());
@@ -73,8 +73,7 @@ public class CPFUtils {
   public static String createNumberCpf() {
     CPFUtils utils = new CPFUtils();
     List<Integer> numbersCpf = utils.doGenerate();
-    return numbersCpf.stream().map(i -> Integer.toString(i))
-        .reduce(SPLIT_CHARACTER, String::concat);
+    return numbersCpf.stream().map(String::valueOf).collect(Collectors.joining());
   }
   
   public static boolean isValid(final String numberCpf) {

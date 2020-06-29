@@ -21,11 +21,11 @@ public class VerifierOnSession {
   private VerifierCondition<Session> verifierSessionExpired;
   
   
-  public void validate(Session session, String cpfNumber) throws Exception {
-    log.debug("Verifying cpf [{}] on session [{session}]", cpfNumber, session);
+  public void validate(Session session, String cpfNumber) {
+    log.debug("Verifying cpf [{}] on session [{}]", cpfNumber, session);
     verifyIfAssociateIsAble.isOk(cpfNumber);
     verifierSessionIsOpen.isOk(session);
     verifierSessionExpired.isOk(session);
-    log.info("Vote [{}] verify with successfully on session [{session}]", cpfNumber, session);
+    log.info("Vote [{}] verify with successfully on session [{}]", cpfNumber, session);
   }
 }

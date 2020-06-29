@@ -3,7 +3,6 @@ package br.com.compasso.votacao.api.service;
 import br.com.compasso.votacao.api.enums.OptionVotation;
 import br.com.compasso.votacao.api.enums.StatusSession;
 import br.com.compasso.votacao.api.exception.DataNotFoundException;
-import br.com.compasso.votacao.api.exception.TopicWithExistingSessionException;
 import br.com.compasso.votacao.api.model.Session;
 import br.com.compasso.votacao.api.model.Topic;
 import br.com.compasso.votacao.api.repository.SessionRepository;
@@ -45,14 +44,12 @@ public class SessionService {
     return sessionRepository.findAllByStatusSession(statusSession);
   }
   
-  public Session open(Long topicId, Long optionalVotingTime)
-      throws DataNotFoundException, TopicWithExistingSessionException {
-    
+  public Session open(Long topicId, Long optionalVotingTime) {
     Objects.requireNonNull(topicId);
     //Check if Topic exists
     Topic topic = topicService.findById(topicId)
         .orElseThrow(() -> new DataNotFoundException("Topic not found on " + topicId));
-    
+  
     return managerSessionService.doOpen(topic, optionalVotingTime);
   }
   

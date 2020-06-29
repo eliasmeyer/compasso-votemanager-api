@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 class VerifierSessionExpired implements VerifierCondition<Session> {
   
   @Override
-  public void isOk(Session session) throws VotingTimeSessionExpiredException {
+  public void isOk(Session session) {
     LocalDateTime dateTimeVote = LocalDateTime.now();
     log.debug("Checking if current datetime [{}] is out time range in session", dateTimeVote);
     log.debug("Checking if current datetime [{}] is out time range in session", dateTimeVote);

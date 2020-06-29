@@ -38,8 +38,7 @@ public class TopicController {
   }
   
   @GetMapping("/{id}")
-  public TopicResponse findById(@PathVariable("id") Long id)
-      throws DataNotFoundException {
+  public TopicResponse findById(@PathVariable("id") Long id) {
     return topicMapper.from(topicService.findById(id)
         .orElseThrow(() -> new DataNotFoundException("Topic not found on " + id)));
   }
@@ -52,14 +51,13 @@ public class TopicController {
   
   @PutMapping("/{id}")
   public TopicResponse update(@PathVariable("id") Long id,
-      @Valid @RequestBody TopicRequest topicRequest) throws DataNotFoundException {
-    
+      @Valid @RequestBody TopicRequest topicRequest) {
     return topicMapper
         .from(topicService.update(id, topicRequest.getTitle(), topicRequest.getDescription()));
   }
   
   @DeleteMapping("/{id}")
-  public void delete(@PathVariable("id") Long id) throws DataNotFoundException {
+  public void delete(@PathVariable("id") Long id) {
     topicService.delete(id);
   }
 }

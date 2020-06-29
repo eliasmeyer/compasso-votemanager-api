@@ -33,14 +33,12 @@ class ManagerSessionService {
   @Autowired
   private VerifierOnSession verifierOnSession;
   
-  protected Session doOpen(Topic topic, Long optionalVotingTime)
-      throws TopicWithExistingSessionException {
-    
+  protected Session doOpen(Topic topic, Long optionalVotingTime) {
     //Check if session exists
     if (sessionRepository.findById(topic.getId()).isPresent()) {
       throw new TopicWithExistingSessionException("Topic with session already registered");
     }
-    
+  
     Session sessionNew = new Session();
     LocalDateTime currentTime = LocalDateTime.now();
     sessionNew.setTopic(topic);

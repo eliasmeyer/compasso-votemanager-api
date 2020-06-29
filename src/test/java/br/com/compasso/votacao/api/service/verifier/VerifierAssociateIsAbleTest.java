@@ -17,13 +17,13 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class VerifyIfAssociateIsAbleTest {
+class VerifierAssociateIsAbleTest {
   
   @Mock
   private AssociateService associateService;
   
   @InjectMocks
-  private VerifyIfAssociateIsAble verifyIfAssociateIsAble;
+  private VerifierAssociateIsAble verifierAssociateIsAble;
   
   @Test
   @DisplayName("Associate is ABLE_TO_VOTE")
@@ -32,7 +32,7 @@ class VerifyIfAssociateIsAbleTest {
     AssociateResponse associateResponse = new AssociateResponse("ABLE_TO_VOTE");
     given(associateService.isAbleToVote(anyString())).willReturn(associateResponse);
     
-    verifyIfAssociateIsAble.isOk("12345678901");
+    verifierAssociateIsAble.isOk("12345678901");
     
     then(associateService).should().isAbleToVote(eq("12345678901"));
   }
@@ -46,7 +46,7 @@ class VerifyIfAssociateIsAbleTest {
     
     assertThatExceptionOfType(AssociateUnableForVotingException.class)
         .isThrownBy(() -> {
-          verifyIfAssociateIsAble.isOk("12345678901");
+          verifierAssociateIsAble.isOk("12345678901");
         });
   }
 }

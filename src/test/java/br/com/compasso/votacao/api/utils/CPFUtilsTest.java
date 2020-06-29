@@ -8,21 +8,21 @@ class CPFUtilsTest {
   
   @Test
   @DisplayName("CPF number is valid")
-  public void testCPFShouldBeValid() {
+  void testCPFShouldBeValid() {
     String cpf = "33499245817";
     Assertions.assertThat(CPFUtils.isValid(cpf)).isTrue();
   }
   
   @Test
   @DisplayName("CPF number isn't valid")
-  public void testCPFShouldBeInvalid() {
+  void testCPFShouldBeInvalid() {
     String cpf = "33499245818";
     Assertions.assertThat(CPFUtils.isValid(cpf)).isFalse();
   }
   
   @Test
   @DisplayName("Generate CPF number valid")
-  public void testShouldGenerateCpfNumberValid() {
+  void testShouldGenerateCpfNumberValid() {
     String cpf = CPFUtils.createNumberCpf();
     Assertions.assertThat(CPFUtils.isValid(cpf)).isTrue();
   }

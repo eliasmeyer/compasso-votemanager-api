@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 class VerifierSessionIsOpen implements VerifierCondition<Session> {
   
   @Override
-  public void isOk(Session session) throws VotingTimeSessionExpiredException {
+  public void isOk(Session session) {
     if (session.getStatusSession() != StatusSession.ABERTO) {
       throw new VotingTimeSessionExpiredException("Voting Time expired on session!");
     }
