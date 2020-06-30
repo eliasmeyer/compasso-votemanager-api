@@ -90,7 +90,6 @@ class SessionControllerTest {
     
     MvcResult mvcResult = mockMvc.perform(get("/sessions")
         .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("$", hasSize(3)))
         .andExpect(jsonPath("$[0].id").isNotEmpty())
@@ -112,7 +111,6 @@ class SessionControllerTest {
     
     MvcResult mvcResult = mockMvc.perform(get("/sessions/{id}", 1)
         .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("@.id", is(1)))
         .andExpect(jsonPath("@.dateTimeOpening").isNotEmpty())
@@ -136,7 +134,6 @@ class SessionControllerTest {
     
     MvcResult mvcResult = mockMvc.perform(get("/sessions/{id}", 999)
         .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
         .andExpect(status().isNotFound())
         .andReturn();
     
@@ -156,7 +153,6 @@ class SessionControllerTest {
     MvcResult mvcResult = mockMvc.perform(post("/sessions")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(sessionRequest)))
-        .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("@.id", is(1)))
         .andExpect(jsonPath("@.dateTimeOpening").isNotEmpty())
@@ -183,7 +179,6 @@ class SessionControllerTest {
     MvcResult mvcResult = mockMvc.perform(post("/sessions")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(sessionRequest)))
-        .andDo(print())
         .andExpect(status().isNotFound())
         .andReturn();
     
@@ -207,7 +202,6 @@ class SessionControllerTest {
     MvcResult mvcResult = mockMvc.perform(post("/sessions")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(sessionRequest)))
-        .andDo(print())
         .andExpect(status().isConflict())
         .andReturn();
     
@@ -226,7 +220,6 @@ class SessionControllerTest {
     mockMvc.perform(post("/sessions/{id}/votes", 1)
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(voteRequest)))
-        .andDo(print())
         .andExpect(status().isOk())
         .andReturn();
     
@@ -244,7 +237,6 @@ class SessionControllerTest {
     MvcResult mvcResult = mockMvc.perform(post("/sessions/{id}/votes", 999)
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(voteRequest)))
-        .andDo(print())
         .andExpect(status().isNotFound())
         .andReturn();
     
@@ -261,7 +253,6 @@ class SessionControllerTest {
     MvcResult mvcResult = mockMvc.perform(post("/sessions/{id}/votes", 999)
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(voteRequest)))
-        .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(responseBody().containsError("cpf", "Cpf can't be blank or null"))
         .andReturn();
@@ -277,7 +268,6 @@ class SessionControllerTest {
     mockMvc.perform(post("/sessions/{id}/votes", 999)
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(voteRequest)))
-        .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.subErrors").isNotEmpty())
         .andDo(print());
@@ -293,7 +283,6 @@ class SessionControllerTest {
     MvcResult mvcResult = mockMvc.perform(post("/sessions/{id}/votes", 999)
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(voteRequest)))
-        .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.subErrors").isNotEmpty())
         .andExpect(responseBody().containsError("vote", "Vote should be SIM or NAO"))
@@ -309,7 +298,6 @@ class SessionControllerTest {
     mockMvc.perform(post("/sessions", 999)
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(sessionRequest)))
-        .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.subErrors").isNotEmpty())
         .andExpect(responseBody().containsError("topicId", "topicId can't be null"))
@@ -324,7 +312,6 @@ class SessionControllerTest {
     mockMvc.perform(post("/sessions", 999)
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(sessionRequest)))
-        .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.subErrors").isNotEmpty())
         .andExpect(responseBody().containsError("minuteTimeVoting",

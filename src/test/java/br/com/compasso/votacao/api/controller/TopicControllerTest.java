@@ -71,7 +71,6 @@ class TopicControllerTest {
     
     MvcResult mvcResult = mockMvc.perform(get("/topics")
         .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
         .andExpect(status().isOk())
         .andReturn();
     
@@ -96,7 +95,6 @@ class TopicControllerTest {
     
     MvcResult mvcResult = mockMvc.perform(get("/topics/{id}", 1)
         .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("@.id", is(topic.getId().intValue())))
         .andExpect(jsonPath("@.title", is(topic.getTitle())))
@@ -120,7 +118,6 @@ class TopicControllerTest {
   
     MvcResult mvcResult = mockMvc.perform(get("/topics/{id}", 999)
         .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
         .andExpect(status().isNotFound())
         .andReturn();
   
@@ -139,7 +136,6 @@ class TopicControllerTest {
     MvcResult mvcResult = mockMvc.perform(post("/topics")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(topicRequest)))
-        .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("@.id", is(1)))
         .andExpect(jsonPath("@.title", is("Pauta #1")))
@@ -161,7 +157,6 @@ class TopicControllerTest {
     mockMvc.perform(post("/topics")
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(topicRequest)))
-        .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(jsonPath("$.subErrors").isNotEmpty())
         .andExpect(responseBody().containsError("title", "title can't be null"))
@@ -181,7 +176,6 @@ class TopicControllerTest {
     mockMvc.perform(put("/topics/{id}", 1)
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(topicRequest)))
-        .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("@.id", is(1)))
         .andExpect(jsonPath("@.title", is("Pauta #2")))
@@ -201,7 +195,6 @@ class TopicControllerTest {
     MvcResult mvcResult = mockMvc.perform(put("/topics/{id}", 999)
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(topicRequest)))
-        .andDo(print())
         .andExpect(status().isNotFound())
         .andReturn();
   
@@ -218,7 +211,6 @@ class TopicControllerTest {
     
     mockMvc.perform(delete("/topics/{id}", 1)
         .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
         .andExpect(status().isOk())
         .andDo(print());
   }
@@ -232,7 +224,6 @@ class TopicControllerTest {
   
     MvcResult mvcResult = mockMvc.perform(delete("/topics/{id}", 999)
         .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
         .andExpect(status().isNotFound())
         .andReturn();
   

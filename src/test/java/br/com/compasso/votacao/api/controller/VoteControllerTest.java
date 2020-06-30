@@ -9,7 +9,6 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -61,7 +60,6 @@ class VoteControllerTest {
     
     MvcResult mvcResult = mockMvc.perform(get("/sessions/{id}/votes", 1)
         .contentType(MediaType.APPLICATION_JSON))
-        .andDo(print())
         .andExpect(status().isOk())
         .andReturn();
     
@@ -90,7 +88,6 @@ class VoteControllerTest {
     MvcResult mvcResult = mockMvc.perform(get("/sessions/{id}/votes/associates", 1)
         .contentType(MediaType.APPLICATION_JSON)
         .param("cpf", "12345678901"))
-        .andDo(print())
         .andExpect(status().isOk())
         .andExpect(jsonPath("@.cpf", is("12345678901")))
         .andReturn();
@@ -113,7 +110,6 @@ class VoteControllerTest {
     mockMvc.perform(get("/sessions/{id}/votes/associates", 1)
         .contentType(MediaType.APPLICATION_JSON)
         .param("cpf", "xpto"))
-        .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(responseBody().containsError("cpf", "RequestParam 'cpf' is wrong"))
         .andReturn();
@@ -129,7 +125,6 @@ class VoteControllerTest {
     mockMvc.perform(get("/sessions/{id}/votes/associates", -1)
         .contentType(MediaType.APPLICATION_JSON)
         .param("cpf", "12345678901"))
-        .andDo(print())
         .andExpect(status().isBadRequest())
         .andExpect(responseBody().containsError("id", "id is invalid"))
         .andReturn();
