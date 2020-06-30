@@ -15,7 +15,7 @@ import lombok.ToString;
 @NoArgsConstructor
 public class TopicRequest {
   
-  @NotNull(message = "Title can't be null")
+  @NotNull(message = "title can't be null")
   @Size(min = 3, max = 70)
   private String title;
   private String description;

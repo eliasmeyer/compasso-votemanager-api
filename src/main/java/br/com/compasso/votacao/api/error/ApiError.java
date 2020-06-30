@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
 import lombok.Getter;
@@ -29,12 +30,12 @@ public class ApiError {
     timestamp = LocalDateTime.now();
   }
   
-  ApiError(HttpStatus httpStatus) {
+  public ApiError(HttpStatus httpStatus) {
     this();
     this.httpStatus = httpStatus;
   }
   
-  ApiError(HttpStatus httpStatus, String message, String path, Throwable ex) {
+  public ApiError(HttpStatus httpStatus, String message, String path, Throwable ex) {
     this();
     this.httpStatus = httpStatus;
     this.message = message;
@@ -42,14 +43,14 @@ public class ApiError {
     this.debugMessage = ex.getLocalizedMessage();
   }
   
-  ApiError(HttpStatus httpStatus, Throwable ex) {
+  public ApiError(HttpStatus httpStatus, Throwable ex) {
     this();
     this.httpStatus = httpStatus;
-    this.message = "Unexpected error";
+    this.message = Optional.ofNullable(ex.getMessage()).orElse("Unexpected error");
     this.debugMessage = ex.getLocalizedMessage();
   }
   
-  ApiError(HttpStatus httpStatus, String message, Throwable ex) {
+  public ApiError(HttpStatus httpStatus, String message, Throwable ex) {
     this();
     this.httpStatus = httpStatus;
     this.message = message;

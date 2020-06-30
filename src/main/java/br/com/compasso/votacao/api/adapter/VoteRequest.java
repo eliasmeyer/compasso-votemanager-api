@@ -17,10 +17,9 @@ import lombok.ToString;
 @NoArgsConstructor
 public class VoteRequest {
   
-  @NotNull(message = "Cpf can't be null")
-  @NotBlank(message = "Cpf can't be blank")
+  @NotBlank(message = "Cpf can't be blank or null")
   private String cpf;
   @NotNull(message = "Vote can't be null")
-  @EnunNamePattern(regexp = "SIM|NAO", message = "Value should be SIM or NAO")
+  @EnunNamePattern(regexp = "SIM|NAO", message = "Vote should be SIM or NAO")
   private OptionVotation vote;
 }

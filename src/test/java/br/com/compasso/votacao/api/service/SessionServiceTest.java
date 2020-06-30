@@ -1,7 +1,7 @@
 package br.com.compasso.votacao.api.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -16,7 +16,6 @@ import static org.mockito.Mockito.verify;
 import br.com.compasso.votacao.api.enums.OptionVotation;
 import br.com.compasso.votacao.api.enums.StatusSession;
 import br.com.compasso.votacao.api.exception.DataNotFoundException;
-import br.com.compasso.votacao.api.exception.TopicWithExistingSessionException;
 import br.com.compasso.votacao.api.helper.HelperTest;
 import br.com.compasso.votacao.api.model.Session;
 import br.com.compasso.votacao.api.model.Topic;
@@ -82,18 +81,17 @@ class SessionServiceTest {
   
   @Nested
   class ActionsSession {
-    
+  
     @Test
     @DisplayName("Session open successfully")
-    void testShouldOpenSuccessfully()
-        throws TopicWithExistingSessionException, DataNotFoundException {
+    void testShouldOpenSuccessfully() {
       //given
       Topic topic = HelperTest.createTopic(1L, "Title #1", "Description #1");
       Session session = HelperTest.createSession(1L, 1L);
-      
+    
       given(topicService.findById(1L))
           .willReturn(Optional.of(topic));
-      
+    
       given(managerSessionService.doOpen(topic, 1L))
           .willReturn(session);
       
@@ -105,20 +103,18 @@ class SessionServiceTest {
       then(topicService).should(times(1)).findById(1L);
       then(managerSessionService).should(times(1)).doOpen(topic, 1L);
     }
-    
+  
     @Test
     @DisplayName("Can't open with topic id not found")
-    void testShouldntOpenWithTopicIdNotFound() throws TopicWithExistingSessionException {
+    void testShouldntOpenWithTopicIdNotFound() {
       //given
       given(topicService.findById(eq(1L))).willReturn(Optional.empty());
-      
-      //when
-      try {
-        sessionService.open(1L, 1L);
-        fail("Should throw exception DataNotFoundException");
-      } catch (DataNotFoundException e) {
-      }
-      
+    
+      assertThatExceptionOfType(DataNotFoundException.class)
+          .isThrownBy(() -> {
+            sessionService.open(1L, 1L);
+          });
+    
       //then
       then(managerSessionService)
           .should(never())
@@ -140,23 +136,35 @@ class SessionServiceTest {
       //then
       verify(managerSessionService).onVote(session, "12345678901", OptionVotation.SIM);
     }
-    
+  
     @Test
     @DisplayName("Can't vote with session id not found")
-    void testShouldntVoteWithSessionIdNotFound()
-        throws Exception {
+    void testShouldntVoteWithSessionIdNotFound() throws Exception {
       //given
       given(sessionService.findById(anyLong())).willReturn(Optional.empty());
-      
-      //when
-      try {
-        sessionService.vote(1L, "12345678901", OptionVotation.SIM);
-      } catch (DataNotFoundException e) {
-      }
-      
+    
+      //when  
+      assertThatExceptionOfType(DataNotFoundException.class)
+          .isThrownBy(() -> {
+            sessionService.vote(1L, "12345678901", OptionVotation.SIM);
+          });
+    
       //then
       then(managerSessionService).should(never())
           .onVote(any(Session.class), anyString(), any(OptionVotation.class));
+    }
+  
+    @Test
+    @DisplayName("Close session successfully")
+    void testShouldCloseSuccessfully() {
+      //given
+      willDoNothing().given(managerSessionService).onClose();
+    
+      //when
+      sessionService.close();
+    
+      //then
+      then(managerSessionService).should().onClose();
     }
   }
 }

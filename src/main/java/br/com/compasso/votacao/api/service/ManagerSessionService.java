@@ -52,9 +52,7 @@ class ManagerSessionService {
     return sessionRepository.save(sessionNew);
   }
   
-  protected void onVote(Session session, String numberCpf, OptionVotation choice)
-      throws Exception {
-    
+  protected void onVote(Session session, String numberCpf, OptionVotation choice) {
     verifierOnSession.validate(session, numberCpf);
     voteService.register(session, numberCpf, choice);
   }

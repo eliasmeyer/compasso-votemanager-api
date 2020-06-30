@@ -35,6 +35,7 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     return errorResponseEntity(apiError);
   }
   
+  
   @Override
   protected ResponseEntity<Object> handleHttpMediaTypeNotSupported(
       HttpMediaTypeNotSupportedException ex,
@@ -62,7 +63,6 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
     apiError.addValidationError(ex.getBindingResult().getGlobalErrors());
     return errorResponseEntity(apiError);
   }
-  
   
   @ExceptionHandler(javax.validation.ConstraintViolationException.class)
   protected ResponseEntity<Object> handleConstraintViolation(
