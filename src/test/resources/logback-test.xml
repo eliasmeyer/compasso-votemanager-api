@@ -7,7 +7,7 @@
   </appender>
   <include resource="/org/springframework/boot/logging/logback/base.xml"/>
   <logger level="debug" name="br.com.compasso"/>
-  <root level="debug">
+  <root level="info">
     <appender-ref ref="STDOUT"/>
   </root>
 </configuration>

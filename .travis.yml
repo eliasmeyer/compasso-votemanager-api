@@ -11,9 +11,9 @@ addons:
   sonarcloud:
     organization: "eliasmeyer-github"
 
-install:
+script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean -Dorg.slf4j.simpleLogger.defaultLogLevel=info -Dorg.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=eliasmeyer_compasso-votemanager-api -Dsonar.login=${SONAR_TOKEN}
+  - mvn clean -Dorg.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=eliasmeyer_compasso-votemanager-api -Dsonar.login=${SONAR_TOKEN}
 
 before_install:
   - chmod +x mvnw
