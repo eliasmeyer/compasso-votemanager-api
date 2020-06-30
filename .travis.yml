@@ -2,9 +2,6 @@ language: java
 jdk:
   - openjdk8
 
-os: linux
-  dist: xenial
-
 cache:
   directories:
     - '$HOME/.m2/repository'
@@ -16,7 +13,10 @@ addons:
 
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean -Dorg.slf4j.simpleLogger.defaultLogLevel=info org.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=eliasmeyer_compasso-votemanager-api -Dsonar.login=${SONAR_TOKEN}
+  - mvn clean -Dorg.slf4j.simpleLogger.defaultLogLevel=info -Dorg.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=eliasmeyer_compasso-votemanager-api -Dsonar.login=${SONAR_TOKEN}
 
 before_install:
   - chmod +x mvnw
+
+os: linux
+dist: xenial
