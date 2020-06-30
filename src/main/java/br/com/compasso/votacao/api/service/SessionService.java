@@ -58,16 +58,15 @@ public class SessionService {
     managerSessionService.onClose();
   }
   
-  public void vote(Long sessionId, String cpf, OptionVotation choice)
-      throws Exception {
+  public void vote(Long sessionId, String cpf, OptionVotation choice) {
     log.info("Receive vote with params: session_id [{}], cpf [{}]", sessionId, cpf);
     Objects.requireNonNull(sessionId);
     Objects.requireNonNull(cpf);
     Objects.requireNonNull(choice);
-    
+  
     Session session = this.findById(sessionId)
         .orElseThrow(() -> new DataNotFoundException("Session not found on " + sessionId));
-    
+  
     managerSessionService.onVote(session, cpf, choice);
   }
 }
