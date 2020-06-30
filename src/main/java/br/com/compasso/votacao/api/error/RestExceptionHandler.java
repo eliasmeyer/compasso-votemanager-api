@@ -4,6 +4,7 @@ import br.com.compasso.votacao.api.exception.AssociateUnableForVotingException;
 import br.com.compasso.votacao.api.exception.DataNotFoundException;
 import br.com.compasso.votacao.api.exception.ExternalServiceUnavailableException;
 import br.com.compasso.votacao.api.exception.InvalidCpfNumberException;
+import br.com.compasso.votacao.api.exception.TitleAlreadyRegisteredException;
 import br.com.compasso.votacao.api.exception.TopicWithExistingSessionException;
 import br.com.compasso.votacao.api.exception.VoteAlreadyRegisteredException;
 import br.com.compasso.votacao.api.exception.VotingTimeSessionExpiredException;
@@ -94,7 +95,8 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler({AssociateUnableForVotingException.class,
       TopicWithExistingSessionException.class,
       VoteAlreadyRegisteredException.class,
-      VotingTimeSessionExpiredException.class})
+      VotingTimeSessionExpiredException.class,
+      TitleAlreadyRegisteredException.class})
   protected ResponseEntity<Object> handleBusinessException(RuntimeException ex,
       WebRequest request) {
     ApiError apiError = new ApiError(HttpStatus.CONFLICT, ex);

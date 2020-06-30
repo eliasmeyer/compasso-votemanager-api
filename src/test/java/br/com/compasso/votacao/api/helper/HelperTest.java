@@ -36,6 +36,13 @@ public class HelperTest {
     return topicRequest;
   }
   
+  public static Topic createTopic(String title, String description) {
+    Topic topic = new Topic();
+    topic.setTitle(title);
+    topic.setDescription(description);
+    return topic;
+  }
+  
   public static Topic createTopic(Long id, String title, String description) {
     Topic topic = new Topic();
     topic.setId(id);

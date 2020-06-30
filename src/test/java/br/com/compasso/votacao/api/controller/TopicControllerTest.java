@@ -26,6 +26,7 @@ import br.com.compasso.votacao.api.adapter.TopicResponse;
 import br.com.compasso.votacao.api.config.MapperConfig;
 import br.com.compasso.votacao.api.error.ApiError;
 import br.com.compasso.votacao.api.exception.DataNotFoundException;
+import br.com.compasso.votacao.api.exception.TitleAlreadyRegisteredException;
 import br.com.compasso.votacao.api.mapper.TopicMapper;
 import br.com.compasso.votacao.api.model.Topic;
 import br.com.compasso.votacao.api.service.TopicService;
@@ -142,12 +143,35 @@ class TopicControllerTest {
         .andExpect(jsonPath("@.description", is("Description #1")))
         .andExpect(jsonPath("@.createdAt").isNotEmpty())
         .andReturn();
-    
+  
     String actualResult = mvcResult.getResponse().getContentAsString();
     String expectedResult = objectMapper.writeValueAsString(topicMapper.from(topic));
     then(topicService).should().save(anyString(), anyString());
     assertEquals(expectedResult, actualResult,
         ignoreFields("createdAt"));
+  }
+  
+  @Test
+  void testCreateWitTitleEquals() throws Exception {
+    TopicRequest topicRequest = createTopicRequest("Pauta #1", "Description #1");
+    ApiError expectedResponse = new ApiError(HttpStatus.CONFLICT,
+        new TitleAlreadyRegisteredException("Topic with title already registered"));
+    willThrow(new TitleAlreadyRegisteredException("Topic with title already registered"))
+        .given(topicService)
+        .save(anyString(), anyString());
+    
+    MvcResult mvcResult = mockMvc.perform(post("/topics")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(topicRequest)))
+        .andExpect(status().isConflict())
+        .andReturn();
+    
+    String actualResult = mvcResult.getResponse().getContentAsString();
+    String expectedResult = objectMapper.writeValueAsString(expectedResponse);
+    
+    then(topicService).should().save(anyString(), anyString());
+    assertEquals(expectedResult, actualResult,
+        ignoreFields("timestamp", "path"));
   }
   
   @Test
