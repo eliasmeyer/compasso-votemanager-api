@@ -1,6 +1,7 @@
 package br.com.compasso.votacao.api.service;
 
 import br.com.compasso.votacao.api.exception.DataNotFoundException;
+import br.com.compasso.votacao.api.exception.TitleAlreadyRegisteredException;
 import br.com.compasso.votacao.api.model.Topic;
 import br.com.compasso.votacao.api.repository.TopicRepository;
 import java.util.List;
@@ -21,6 +22,12 @@ public class TopicService {
   
   public Topic save(String title, String description) {
     Objects.requireNonNull(title);
+  
+    Optional<Topic> topicExist = topicRepository.findByTitleIgnoreCase(title);
+    if (topicExist.isPresent()) {
+      throw new TitleAlreadyRegisteredException("Topic with title already registered");
+    }
+  
     Topic topic = new Topic();
     topic.setTitle(title);
     topic.setDescription(description);

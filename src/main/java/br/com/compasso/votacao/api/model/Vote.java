@@ -18,6 +18,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -39,6 +40,7 @@ public class Vote {
   @Column(name = "cpf_number", length = 11, unique = true, nullable = false)
   private String cpfNumber;
   @Enumerated(EnumType.STRING)
+  @Type(type = "br.com.compasso.votacao.api.enums.EnumTypePostgreSQL")
   @Column(name = "opcao")
   private OptionVotation optionVotation;
   @CreatedDate

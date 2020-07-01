@@ -1,4 +1,4 @@
-package br.com.compasso.votacao.api.config;
+package br.com.compasso.votacao.api.config.log;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

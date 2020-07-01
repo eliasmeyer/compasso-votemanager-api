@@ -3,35 +3,30 @@ package br.com.compasso.votacao.api.service;
 import br.com.compasso.votacao.api.enums.OptionVotation;
 import br.com.compasso.votacao.api.model.Result;
 import br.com.compasso.votacao.api.model.Topic;
-import br.com.compasso.votacao.api.repository.TopicRepository;
 import java.util.List;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @Service
-@Transactional
 class ResultService {
   
   private static final Long ZERO = 0L;
   
-  @Autowired
-  private TopicRepository topicRepository;
-  
-  public Result save(Topic topic, List<Result> results) {
+  public Result computer(Topic topic, List<Result> results) {
     Objects.requireNonNull(results);
     Objects.requireNonNull(topic);
-    
+    log.debug("Computing vote for Pauta [{}]", topic.getId());
     Result result = results
         .stream()
         .findFirst()
-        .orElse(new Result(OptionVotation.INDETERMINADO, ZERO));
-    
+        .orElseGet(() -> {
+          log.debug("There are no votes to compute in Pauta [{}]", topic.getId());
+          return new Result(OptionVotation.INDETERMINADO, ZERO);
+        });
     topic.setResult(result);
-    topicRepository.save(topic);
+    log.info("Result successfully computed to Pauta [{}]", topic.getId());
     return result;
   }
 }

@@ -12,6 +12,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Type;
 
 @Data
 @NoArgsConstructor
@@ -33,6 +34,7 @@ public class Result {
   @Column(updatable = false, nullable = false)
   private Long id;
   @Column(name = "opcao_eleita")
+  @Type(type = "br.com.compasso.votacao.api.enums.EnumTypePostgreSQL")
   @Enumerated(EnumType.STRING)
   private OptionVotation electedOption;
   @Column(name = "total")

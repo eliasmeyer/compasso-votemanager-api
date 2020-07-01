@@ -4,9 +4,9 @@ DELETE FROM Voto;
 
 DELETE FROM Sessao;
 
-DELETE FROM Resultado;
-
 DELETE FROM Pauta;
+
+DELETE FROM Resultado;
 
 ALTER SEQUENCE resultado_id_seq RESTART WITH 1;
 

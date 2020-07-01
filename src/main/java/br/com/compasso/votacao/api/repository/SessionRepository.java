@@ -14,7 +14,7 @@ import org.springframework.stereotype.Repository;
 @RestResource(exported = false)
 public interface SessionRepository extends JpaRepository<Session, Long> {
   
-  @Query("select s from Session s where s.dateTimeClosing >= :dateTimeCurrent "
+  @Query("select s from Session s where s.dateTimeClosing <= :dateTimeCurrent "
       + "and s.statusSession = br.com.compasso.votacao.api.enums.StatusSession.ABERTO")
   List<Session> findAllThatPrecedesDateTimeClosingAndStatusEqualOpen(
       @Param("dateTimeCurrent") LocalDateTime dateTimeCurrent);

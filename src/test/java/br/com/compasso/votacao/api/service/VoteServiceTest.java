@@ -1,7 +1,7 @@
 package br.com.compasso.votacao.api.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -30,7 +30,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 @ExtendWith(MockitoExtension.class)
-class VoteServiceIT {
+class VoteServiceTest {
   
   @Mock
   private SessionService sessionService;
@@ -68,14 +68,13 @@ class VoteServiceIT {
     void testShouldntFindAllBySessionIdNotFound() {
       //given
       given(sessionService.findById(anyLong())).willReturn(Optional.empty());
-      
+  
       //when
-      try {
-        voteService.findAllBySessionId(1L);
-        fail("Should throw exception DataNotFoundException");
-      } catch (DataNotFoundException e) {
-      }
-      
+      assertThatExceptionOfType(DataNotFoundException.class)
+          .isThrownBy(() -> {
+            voteService.findAllBySessionId(1L);
+          });
+  
       //then
       then(voteRepository).should(never()).findAllBySession(any(Session.class));
     }
@@ -105,13 +104,13 @@ class VoteServiceIT {
     void testShouldntFindBySessionIdAndAssociateIdWithIdSessionNotFound() {
       //given
       given(sessionService.findById(anyLong())).willReturn(Optional.empty());
-      
+  
       //when
-      try {
-        voteService.findBySessionIdAndCpfNumber(1L, "12345678901");
-      } catch (DataNotFoundException e) {
-      }
-      
+      assertThatExceptionOfType(DataNotFoundException.class)
+          .isThrownBy(() -> {
+            voteService.findBySessionIdAndCpfNumber(1L, "12345678901");
+          });
+  
       //then
       then(voteRepository).should(never())
           .findBySessionAndCpfNumber(any(Session.class), anyString());
@@ -172,14 +171,13 @@ class VoteServiceIT {
       Vote vote = HelperTest.createVote(session, "12345678901", OptionVotation.SIM);
       given(voteRepository.findBySessionAndCpfNumber(session, "12345678901"))
           .willReturn(Optional.of(vote));
-      
+  
       //when
-      try {
-        Vote actual = voteService.register(session, "12345678901", OptionVotation.SIM);
-        fail("Should throw VoteAlreadyRegisteredException");
-      } catch (VoteAlreadyRegisteredException e) {
-      }
-      
+      assertThatExceptionOfType(VoteAlreadyRegisteredException.class)
+          .isThrownBy(() -> {
+            voteService.register(session, "12345678901", OptionVotation.SIM);
+          });
+  
       //then
       then(voteRepository).should(never()).save(any(Vote.class));
     }

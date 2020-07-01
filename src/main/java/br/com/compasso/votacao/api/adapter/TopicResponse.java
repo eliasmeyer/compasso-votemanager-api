@@ -13,5 +13,6 @@ public class TopicResponse {
   private String title;
   private String description;
   private String createdAt;
+  private ResultResponse result;
   
 }

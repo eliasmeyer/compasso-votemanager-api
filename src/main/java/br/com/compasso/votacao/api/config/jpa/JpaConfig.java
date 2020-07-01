@@ -1,4 +1,4 @@
-package br.com.compasso.votacao.api.config;
+package br.com.compasso.votacao.api.config.jpa;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

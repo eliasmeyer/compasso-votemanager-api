@@ -2,6 +2,7 @@ package br.com.compasso.votacao.api.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import br.com.compasso.votacao.api.config.jpa.JpaConfig;
 import br.com.compasso.votacao.api.model.Result;
 import br.com.compasso.votacao.api.model.Session;
 import br.com.compasso.votacao.api.model.Vote;
@@ -11,10 +12,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
+@ActiveProfiles("test")
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Import(JpaConfig.class)
 @Sql(value = {"/sql/data.sql"})
 public class VoteRepositoryIT {
   

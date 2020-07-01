@@ -13,8 +13,7 @@ public interface VoteMapper {
   @Mappings({
       @Mapping(target = "sessionId", source = "session.id"),
       @Mapping(target = "cpf", source = "cpfNumber"),
-      @Mapping(target = "vote", source = "optionVotation"),
-      //@Mapping(target = "dateTimeVote", source = "dateTimeVote", dateFormat = "yyyy-MM-dd HH:mm:ss")
+      @Mapping(target = "vote", source = "optionVotation")
   })
   VoteResponse from(Vote vote);
   
