@@ -26,6 +26,5 @@ deploy:
   api_key: ${HEROKU_TOKEN}
   app: eliasmeyer-compasso
   on: master
-  install: skip
-  script: skip
+  script: ./mvnw -DskipTests clean install
   skip_cleanup: true
