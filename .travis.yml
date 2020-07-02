@@ -17,14 +17,16 @@ addons:
 before_install:
   - chmod +x mvnw
 
-script:
-  # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
-  - mvn clean -Dorg.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=eliasmeyer_compasso-votemanager-api -Dsonar.login=${SONAR_TOKEN}
-
-deploy:
-  provider: heroku
-  api_key: ${HEROKU_TOKEN}
-  app: eliasmeyer-compasso
-  on: master
-  script: ./mvnw -DskipTests clean install
-  skip_cleanup: true
+jobs:
+  include:
+    - stage: tests
+      # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
+      script: mvnw clean -Dorg.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=eliasmeyer_compasso-votemanager-api -Dsonar.login=${SONAR_TOKEN}
+    - stage: deploy
+      install: mvnw clean install -DskipTests=true
+      script: skip
+      provider: heroku
+        api_key: ${HEROKU_TOKEN}
+        app: eliasmeyer-compasso
+        on: master
+        skip_cleanup: true
