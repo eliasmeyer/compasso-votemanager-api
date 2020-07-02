@@ -26,4 +26,6 @@ deploy:
   api_key: ${HEROKU_TOKEN}
   app: eliasmeyer-compasso
   on: master
-
+  install: skip
+  script: skip
+  skip_cleanup: true
