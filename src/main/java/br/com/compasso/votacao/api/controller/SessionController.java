@@ -57,8 +57,7 @@ public class SessionController {
   
   @PostMapping("/{id}/votes")
   public void vote(@PathVariable("id") @Positive(message = "id is invalid") Long id,
-      @Valid @RequestBody VoteRequest voteRequest)
-      throws Exception {
+      @Valid @RequestBody VoteRequest voteRequest) {
     log.debug("Receiving request with id [{}] and data", id, voteRequest);
     sessionService
         .vote(id,

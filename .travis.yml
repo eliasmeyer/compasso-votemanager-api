@@ -1,4 +1,7 @@
+os: linux
+dist: xenial
 language: java
+
 jdk:
   - openjdk8
 
@@ -11,12 +14,15 @@ addons:
   sonarcloud:
     organization: "eliasmeyer-github"
 
+before_install:
+  - chmod +x mvnw
+
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
   - mvn clean -Dorg.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=eliasmeyer_compasso-votemanager-api -Dsonar.login=${SONAR_TOKEN}
 
-before_install:
-  - chmod +x mvnw
+deploy:
+  provider: heroku
+  api_key: ${HEROKU_TOKEN}
+  on: master
 
-os: linux
-dist: xenial
