@@ -24,5 +24,6 @@ script:
 deploy:
   provider: heroku
   api_key: ${HEROKU_TOKEN}
+  app: eliasmeyer-compasso
   on: master
 
