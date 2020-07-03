@@ -1,4 +1,4 @@
-# Projeto - TranspoBrasil 
+# Desafio - Compasso 
 
 [![Build Status](https://travis-ci.org/eliasmeyer/compasso-votemanager-api.svg?branch=master)](https://travis-ci.org/eliasmeyer/compasso-votemanager-api)
 
