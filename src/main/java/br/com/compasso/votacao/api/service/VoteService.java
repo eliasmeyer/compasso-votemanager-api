@@ -28,13 +28,17 @@ public class VoteService {
   public List<Vote> findAllBySessionId(Long sessionId) throws DataNotFoundException {
     Objects.requireNonNull(sessionId);
     Session session = sessionService.findById(sessionId)
-        .orElseThrow(() -> new DataNotFoundException("Session not found on " + sessionId));
+        .orElseThrow(() -> {
+          log.error("Session id [{}] not found", sessionId);
+          return new DataNotFoundException("Session not found on " + sessionId);
+        });
     
     return this.findAllBySession(session);
   }
   
   public List<Vote> findAllBySession(Session session) {
     Objects.requireNonNull(session);
+    log.debug("Find All by Session");
     return voteRepository.findAllBySession(session);
   }
   
@@ -42,12 +46,17 @@ public class VoteService {
       throws DataNotFoundException {
     Objects.requireNonNull(sessionId);
     Objects.requireNonNull(cpfNumber);
-    
+  
     Session session = sessionService.findById(sessionId)
-        .orElseThrow(() -> new DataNotFoundException("Session not found on " + sessionId));
-    
+        .orElseThrow(() -> {
+          log.error("Session id [{}] not found", sessionId);
+          return new DataNotFoundException("Session not found on " + sessionId);
+        });
     Optional<Vote> vote = voteRepository.findBySessionAndCpfNumber(session, cpfNumber);
-    return vote.orElseThrow(() -> new DataNotFoundException("Vote not found!"));
+    return vote.orElseThrow(() -> {
+      log.error("Vote Session id [{}], cpf [{}] not found", sessionId, cpfNumber);
+      return new DataNotFoundException("Vote not found!");
+    });
   }
   
   @Transactional
@@ -59,6 +68,7 @@ public class VoteService {
     
     Optional<Vote> vote = voteRepository.findBySessionAndCpfNumber(session, numberCpf);
     if (vote.isPresent()) {
+      log.error("Vote Session id [{}], cpf [{}] already registered previously !");
       throw new VoteAlreadyRegisteredException("Vote already computed on session!");
     }
     Vote voteNew = new Vote();
@@ -69,6 +79,8 @@ public class VoteService {
   }
   
   public List<Result> countBySession(Session session) {
+    Objects.requireNonNull(session);
+    log.debug("Calculating votes on Session id [{}]", session.getId());
     return voteRepository.countBySession(session);
   }
 }

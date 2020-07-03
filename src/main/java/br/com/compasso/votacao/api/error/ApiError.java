@@ -1,6 +1,7 @@
 package br.com.compasso.votacao.api.error;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 
+@Schema(name = "ApiError", description = "Response de Erro")
 @Getter
 @Setter
 public class ApiError {

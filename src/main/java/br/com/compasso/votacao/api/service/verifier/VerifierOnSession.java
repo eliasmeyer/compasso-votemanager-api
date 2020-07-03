@@ -26,6 +26,7 @@ public class VerifierOnSession {
     verifyIfAssociateIsAble.isOk(cpfNumber);
     verifierSessionIsOpen.isOk(session);
     verifierSessionExpired.isOk(session);
-    log.info("Vote [{}] verify with successfully on session [{}]", cpfNumber, session);
+    log.info("Associate vote [{}] verify with successfully on session id [{}]", cpfNumber,
+        session.getId());
   }
 }

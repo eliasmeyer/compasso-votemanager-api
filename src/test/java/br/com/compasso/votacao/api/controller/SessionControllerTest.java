@@ -32,6 +32,8 @@ import br.com.compasso.votacao.api.enums.OptionVotation;
 import br.com.compasso.votacao.api.enums.StatusSession;
 import br.com.compasso.votacao.api.error.ApiError;
 import br.com.compasso.votacao.api.exception.DataNotFoundException;
+import br.com.compasso.votacao.api.exception.ExternalServiceUnavailableException;
+import br.com.compasso.votacao.api.exception.InvalidCpfNumberException;
 import br.com.compasso.votacao.api.exception.TopicWithExistingSessionException;
 import br.com.compasso.votacao.api.helper.ApiErrorDeserializer;
 import br.com.compasso.votacao.api.mapper.SessionMapper;
@@ -308,7 +310,7 @@ class SessionControllerTest {
   @Test
   void testCreateWithSessionRequestMinuteTimeVotingNegative() throws Exception {
     SessionRequest sessionRequest = createSessionRequest(1L, -1L);
-    
+  
     mockMvc.perform(post("/sessions", 999)
         .contentType(MediaType.APPLICATION_JSON)
         .content(objectMapper.writeValueAsString(sessionRequest)))
@@ -317,6 +319,48 @@ class SessionControllerTest {
         .andExpect(responseBody().containsError("minuteTimeVoting",
             "minuteTimeVoting should be greater than or equal 1"))
         .andReturn();
+  
+  }
+  
+  @Test
+  void testVoteWithCpfInvalid() throws Exception {
+    VoteRequest voteRequest = createVoteRequest("12345678901", OptionVotation.SIM);
+    ApiError expectedResponse = new ApiError(HttpStatus.BAD_REQUEST,
+        new InvalidCpfNumberException("CPF number is invalid!"));
     
+    willThrow(new InvalidCpfNumberException("CPF number is invalid!"))
+        .given(sessionService).vote(1L, "12345678901", OptionVotation.SIM);
+    
+    MvcResult mvcResult = mockMvc.perform(post("/sessions/{id}/votes", 1)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(voteRequest)))
+        .andExpect(status().isBadRequest())
+        .andReturn();
+    
+    String actualResult = mvcResult.getResponse().getContentAsString();
+    String expectedResult = objectMapper.writeValueAsString(expectedResponse);
+    
+    assertEquals(expectedResult, actualResult, ignoreFields("timestamp", "path"));
+  }
+  
+  @Test
+  void testVoteWithErrorInAPIExternal() throws Exception {
+    VoteRequest voteRequest = createVoteRequest("12345678901", OptionVotation.SIM);
+    ApiError expectedResponse = new ApiError(HttpStatus.SERVICE_UNAVAILABLE,
+        new ExternalServiceUnavailableException("ERROR in Service External Associate"));
+    
+    willThrow(new ExternalServiceUnavailableException("ERROR in Service External Associate"))
+        .given(sessionService).vote(1L, "12345678901", OptionVotation.SIM);
+    
+    MvcResult mvcResult = mockMvc.perform(post("/sessions/{id}/votes", 1)
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(objectMapper.writeValueAsString(voteRequest)))
+        .andExpect(status().isServiceUnavailable())
+        .andReturn();
+    
+    String actualResult = mvcResult.getResponse().getContentAsString();
+    String expectedResult = objectMapper.writeValueAsString(expectedResponse);
+    
+    assertEquals(expectedResult, actualResult, ignoreFields("timestamp", "path"));
   }
 }

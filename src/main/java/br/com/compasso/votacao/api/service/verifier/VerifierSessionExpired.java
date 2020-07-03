@@ -18,6 +18,7 @@ class VerifierSessionExpired implements VerifierCondition<Session> {
     //Check if dateTimeVote is out time range 
     if (dateTimeVote.isBefore(session.getDateTimeOpening())
         || dateTimeVote.isAfter(session.getDateTimeClosing())) {
+      log.error("Voting time expired on session id [{}]", session.getId());
       throw new VotingTimeSessionExpiredException("Voting Time expired on session!");
     }
     log.info("Session [{}] not yet expired", session.getId());

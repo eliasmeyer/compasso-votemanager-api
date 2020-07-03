@@ -13,6 +13,7 @@ class VerifierSessionIsOpen implements VerifierCondition<Session> {
   @Override
   public void isOk(Session session) {
     if (session.getStatusSession() != StatusSession.ABERTO) {
+      log.error("Session id [{}] is NOT Open", session.getId());
       throw new VotingTimeSessionExpiredException("Voting Time expired on session!");
     }
     log.info("Session [{}] is OPEN", session.getId());
