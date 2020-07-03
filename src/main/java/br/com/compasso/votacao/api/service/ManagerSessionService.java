@@ -36,6 +36,7 @@ class ManagerSessionService {
   protected Session doOpen(Topic topic, Long optionalVotingTime) {
     //Check if session exists
     if (sessionRepository.findById(topic.getId()).isPresent()) {
+      log.error("Topic id [{}] with session already registered", topic.getId());
       throw new TopicWithExistingSessionException("Topic with session already registered");
     }
   
@@ -71,7 +72,7 @@ class ManagerSessionService {
     sessionsToComputer.parallelStream().forEach(s -> s.setStatusSession(StatusSession.APURANDO));
     sessionRepository.saveAll(sessionsToComputer);
     sessionRepository.flush();
-    
+    log.debug("Changed Sessions status to COMPUTER successfully");
     sessionsToComputer
         .parallelStream()
         .forEach(currentSession -> {

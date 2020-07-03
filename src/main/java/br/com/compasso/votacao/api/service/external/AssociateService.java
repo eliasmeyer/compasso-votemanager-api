@@ -29,16 +29,16 @@ public class AssociateService {
               AssociateResponse.class,
               numberCpf)
       ).orElseThrow(() -> {
-        log.error("ERROR RETURN EXTERNAL API - RESPONSE NULL");
+        log.error("ERROR RETURN EXTERNAL API - RESPONSE NULL FOR CPF", numberCpf);
         return new ExternalServiceUnavailableException("Response body is null!");
       });
     } catch (HttpClientErrorException ex) {
       if (ex.getStatusCode() == HttpStatus.NOT_FOUND) {
-        log.warn("CPF number [{}] is INVALID!");
+        log.error("CPF number [{}] is INVALID!", numberCpf);
         throw new InvalidCpfNumberException("CPF number is invalid!");
       }
       if (ex.getStatusCode() == HttpStatus.INTERNAL_SERVER_ERROR) {
-        log.error("ERROR EXTERNAL API");
+        log.error("ERROR EXTERNAL API", ex);
         throw new ExternalServiceUnavailableException("ERROR in Service External Associate", ex);
       }
     }

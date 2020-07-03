@@ -22,8 +22,9 @@ class VerifierAssociateIsAble implements VerifierCondition<String> {
     AssociateResponse response = associateService.isAbleToVote(numberCpf);
     log.debug("ASSOCIATE RESPONSE : [{}]", response);
     if (!(Objects.equals(response.getStatus(), StatusToVote.ABLE_TO_VOTE.toString()))) {
+      log.error("Associate [{}] unable to vote!");
       throw new AssociateUnableForVotingException("Associate unable for voting");
     }
-    log.info("CPF [{}] able to vote!", numberCpf);
+    log.info("Associate [{}] able to vote!", numberCpf);
   }
 }
