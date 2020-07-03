@@ -17,7 +17,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.HttpStatus;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,6 +68,30 @@ class AssociateServiceTest {
   void testShouldCallAPIWithCpfWrong() {
     willThrow(new InvalidCpfNumberException("Error"))
         .given(restTemplate).getForObject(URI_REST, AssociateResponse.class, "99999999999");
+  
+    Throwable throwable = catchThrowable(() -> associateService.isAbleToVote("99999999999"));
+  
+    assertThat(throwable)
+        .isInstanceOf(InvalidCpfNumberException.class);
+  }
+  
+  @Test
+  @DisplayName("External API has Error Response Null")
+  void testShouldThrowErrorAPIHasError() {
+    given(restTemplate.getForObject(URI_REST, AssociateResponse.class, "99999999999"))
+        .willReturn(null);
+    
+    Throwable throwable = catchThrowable(() -> associateService.isAbleToVote("99999999999"));
+    
+    assertThat(throwable)
+        .isInstanceOf(ExternalServiceUnavailableException.class);
+  }
+  
+  @Test
+  @DisplayName("External API has Error HttpClient 404")
+  void testShouldThrowErrorAPIHasErrorHttpClient404() {
+    willThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND))
+        .given(restTemplate).getForObject(URI_REST, AssociateResponse.class, "99999999999");
     
     Throwable throwable = catchThrowable(() -> associateService.isAbleToVote("99999999999"));
     
@@ -74,9 +100,9 @@ class AssociateServiceTest {
   }
   
   @Test
-  @DisplayName("External API has Error")
-  void testShouldThrowErrorAPIHasError() {
-    willThrow(new ExternalServiceUnavailableException("Error"))
+  @DisplayName("External API has Error HttpClient 500")
+  void testShouldThrowErrorAPIHasErrorHttpClient500() {
+    willThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR))
         .given(restTemplate).getForObject(URI_REST, AssociateResponse.class, "99999999999");
     
     Throwable throwable = catchThrowable(() -> associateService.isAbleToVote("99999999999"));

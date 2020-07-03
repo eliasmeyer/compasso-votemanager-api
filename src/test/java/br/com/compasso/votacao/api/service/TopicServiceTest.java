@@ -1,5 +1,6 @@
 package br.com.compasso.votacao.api.service;
 
+import static br.com.compasso.votacao.api.helper.HelperTest.createSession;
 import static br.com.compasso.votacao.api.helper.HelperTest.createTopic;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -11,6 +12,8 @@ import static org.mockito.Mockito.never;
 
 import br.com.compasso.votacao.api.exception.DataNotFoundException;
 import br.com.compasso.votacao.api.exception.TitleAlreadyRegisteredException;
+import br.com.compasso.votacao.api.exception.TopicWithExistingSessionException;
+import br.com.compasso.votacao.api.model.Session;
 import br.com.compasso.votacao.api.model.Topic;
 import br.com.compasso.votacao.api.repository.TopicRepository;
 import java.util.ArrayList;
@@ -29,6 +32,8 @@ class TopicServiceTest {
   
   @Mock
   private TopicRepository topicRepository;
+  @Mock
+  private SessionService sessionService;
   @InjectMocks
   private TopicService topicService;
   
@@ -152,12 +157,15 @@ class TopicServiceTest {
       Topic expected = createTopic(1L, "Title #1", "Description #1");
       given(topicRepository.findById(anyLong()))
           .willReturn(Optional.ofNullable(expected));
-      
+      given(sessionService.findById(1L))
+          .willReturn(Optional.empty());
+  
       //when
       topicService.delete(1L);
-      
+  
       //then
       then(topicRepository).should().findById(anyLong());
+      then(sessionService).should().findById(anyLong());
       then(topicRepository).should().delete(any(Topic.class));
     }
     
@@ -174,6 +182,26 @@ class TopicServiceTest {
             topicService.delete(1L);
           });
   
+      //then
+      then(topicRepository).should(never()).delete(any(Topic.class));
+    }
+  
+    @Test
+    @DisplayName("Delete Topic with session registered")
+    void testShoudntDeleteWithSessionRegistered() {
+      //given
+      Topic topic = createTopic(1L, "Title #1", "Description #1");
+      Session session = createSession(1L, 2L);
+      given(topicRepository.findById(anyLong()))
+          .willReturn(Optional.of(topic));
+      given(sessionService.findById(1L)).willReturn(Optional.of(session));
+    
+      //when
+      assertThatExceptionOfType(TopicWithExistingSessionException.class)
+          .isThrownBy(() -> {
+            topicService.delete(1L);
+          });
+    
       //then
       then(topicRepository).should(never()).delete(any(Topic.class));
     }
