@@ -7,11 +7,11 @@ import java.util.List;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.data.rest.core.annotation.RestResource;
+import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.stereotype.Repository;
 
 @Repository
-@RestResource(exported = false)
+@RepositoryRestResource(exported = false)
 public interface SessionRepository extends JpaRepository<Session, Long> {
   
   @Query("select s from Session s where s.dateTimeClosing <= :dateTimeCurrent "
