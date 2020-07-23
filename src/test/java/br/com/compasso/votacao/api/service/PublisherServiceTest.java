@@ -42,7 +42,7 @@ class PublisherServiceTest {
       //given
       List<Topic> topicList = makeListTopics(3);
       MessageChannel mockMessageChannel = mock(MessageChannel.class);
-      given(resultPublisher.output()).willReturn(mockMessageChannel);
+      given(resultPublisher.compassoChannel()).willReturn(mockMessageChannel);
       given(mockMessageChannel.send(any(Message.class))).willReturn(Boolean.TRUE);
       given(topicMapper.from(topicList)).willAnswer(invocation -> topicMapperImpl.from(topicList));
       
@@ -51,7 +51,7 @@ class PublisherServiceTest {
       
       //then
       then(topicMapper).should(times(1)).from(topicList);
-      then(resultPublisher.output()).should(times(3)).send(any(Message.class));
+      then(resultPublisher.compassoChannel()).should(times(3)).send(any(Message.class));
     }
   }
 }

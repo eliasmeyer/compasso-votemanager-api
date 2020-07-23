@@ -25,7 +25,7 @@ public class PublisherService {
     List<TopicResponse> topicResponseList = mapper.from(topics);
     for (TopicResponse response : topicResponseList) {
       try {
-        resultPublisher.output().send(MessageBuilder.withPayload(response).build());
+        resultPublisher.compassoChannel().send(MessageBuilder.withPayload(response).build());
       } catch (Exception ex) {
         log.error("ERROR ON PUBLISHING TOPIC RESULT [{}].", response.getId(), ex);
       }

@@ -8,6 +8,6 @@ public interface ResultPublisher {
   String OUTPUT = "compasso-channel";
   
   @Output(OUTPUT)
-  MessageChannel output();
+  MessageChannel compassoChannel();
   
 }
