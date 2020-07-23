@@ -2,6 +2,7 @@ package br.com.compasso.votacao.api.model;
 
 import br.com.compasso.votacao.api.enums.StatusSession;
 import java.time.LocalDateTime;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,12 +16,16 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.Type;
 import org.springframework.data.annotation.CreatedDate;
 
 @Data
 @NoArgsConstructor
 @Entity
+@Cacheable
+@Cache(region = "sessionCache", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "Sessao")
 public class Session {
   

@@ -14,13 +14,12 @@ class VerifierSessionExpired implements VerifierCondition<Session> {
   public void isOk(Session session) {
     LocalDateTime dateTimeVote = LocalDateTime.now();
     log.debug("Checking if current datetime [{}] is out time range in session", dateTimeVote);
-    log.debug("Checking if current datetime [{}] is out time range in session", dateTimeVote);
     //Check if dateTimeVote is out time range 
     if (dateTimeVote.isBefore(session.getDateTimeOpening())
         || dateTimeVote.isAfter(session.getDateTimeClosing())) {
       log.error("Voting time expired on session id [{}]", session.getId());
       throw new VotingTimeSessionExpiredException("Voting Time expired on session!");
     }
-    log.info("Session [{}] not yet expired", session.getId());
+    log.debug("Session [{}] not yet expired", session.getId());
   }
 }

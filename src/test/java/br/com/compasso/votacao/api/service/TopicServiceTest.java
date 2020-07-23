@@ -1,7 +1,7 @@
 package br.com.compasso.votacao.api.service;
 
-import static br.com.compasso.votacao.api.helper.HelperTest.createSession;
-import static br.com.compasso.votacao.api.helper.HelperTest.createTopic;
+import static br.com.compasso.votacao.api.helper.TestHelper.createSession;
+import static br.com.compasso.votacao.api.helper.TestHelper.createTopic;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;

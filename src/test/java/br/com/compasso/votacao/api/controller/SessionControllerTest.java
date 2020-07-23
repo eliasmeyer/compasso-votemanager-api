@@ -1,10 +1,10 @@
 package br.com.compasso.votacao.api.controller;
 
-import static br.com.compasso.votacao.api.helper.HelperTest.createSession;
-import static br.com.compasso.votacao.api.helper.HelperTest.createSessionRequest;
-import static br.com.compasso.votacao.api.helper.HelperTest.createVoteRequest;
-import static br.com.compasso.votacao.api.helper.HelperTest.ignoreFields;
-import static br.com.compasso.votacao.api.helper.HelperTest.responseBody;
+import static br.com.compasso.votacao.api.helper.TestHelper.createSession;
+import static br.com.compasso.votacao.api.helper.TestHelper.createSessionRequest;
+import static br.com.compasso.votacao.api.helper.TestHelper.createVoteRequest;
+import static br.com.compasso.votacao.api.helper.TestHelper.ignoreFields;
+import static br.com.compasso.votacao.api.helper.TestHelper.responseBody;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.hasSize;
 import static org.hamcrest.Matchers.is;

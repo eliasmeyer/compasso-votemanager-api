@@ -1,7 +1,6 @@
 package br.com.compasso.votacao.api.config.scheduler;
 
 import br.com.compasso.votacao.api.service.SessionService;
-import java.util.concurrent.ExecutionException;
 import javax.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ public class SchedulerConfig {
   private String cron;
   
   @Scheduled(cron = "${compasso.votemanager.scheduler.cron}")
-  public void scheduledJob() throws ExecutionException, InterruptedException {
+  public void scheduledJob() {
     sessionService.close();
   }
   

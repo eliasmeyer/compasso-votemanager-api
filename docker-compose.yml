@@ -1,0 +1,33 @@
+version: "3.5"
+
+services:
+  #PostgreSQL
+  db:
+    image: postgres:12.1
+    hostname: compasso_db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=compasso
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+  #RabbitMQ
+  rabbit:
+    image: rabbitmq:3.8.5-management-alpine
+    hostname: compasso_mq
+    environment:
+      - RABBITMQ_DEFAULT_USER=compasso
+      - RABBITMQ_DEFAULT_PASS=compasso
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq-volume:/var/lib/rabbitmq:rw
+
+volumes:
+  postgres-volume:
+  rabbitmq-volume:
+
+

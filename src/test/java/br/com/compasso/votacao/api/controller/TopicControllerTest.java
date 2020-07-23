@@ -1,9 +1,9 @@
 package br.com.compasso.votacao.api.controller;
 
-import static br.com.compasso.votacao.api.helper.HelperTest.createTopic;
-import static br.com.compasso.votacao.api.helper.HelperTest.createTopicRequest;
-import static br.com.compasso.votacao.api.helper.HelperTest.ignoreFields;
-import static br.com.compasso.votacao.api.helper.HelperTest.responseBody;
+import static br.com.compasso.votacao.api.helper.TestHelper.createTopic;
+import static br.com.compasso.votacao.api.helper.TestHelper.createTopicRequest;
+import static br.com.compasso.votacao.api.helper.TestHelper.ignoreFields;
+import static br.com.compasso.votacao.api.helper.TestHelper.responseBody;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyString;
