@@ -50,8 +50,8 @@ class VerifierVoteRegisteredTest {
     
     //when + then
     assertThatExceptionOfType(VoteAlreadyRegisteredException.class)
-        .isThrownBy(() -> {
-          verifierVoteRegistered.isOk(new VoteVerifierBean(createSession(1L, 1L), "12345678901"));
-        });
+        .isThrownBy(() ->
+            verifierVoteRegistered.isOk(new VoteVerifierBean(createSession(1L, 1L), "12345678901"))
+        );
   }
 }
