@@ -20,11 +20,10 @@ class VerifierAssociateIsAble implements VerifierCondition<String> {
   public void isOk(String numberCpf) {
     log.debug("Checking if cpf [{}] is able...", numberCpf);
     AssociateResponse response = associateService.isAbleToVote(numberCpf);
-    log.debug("ASSOCIATE RESPONSE : [{}]", response);
     if (!(Objects.equals(response.getStatus(), StatusToVote.ABLE_TO_VOTE.toString()))) {
-      log.error("Associate [{}] unable to vote!");
+      log.error("Associate [{}] unable to vote!", numberCpf);
       throw new AssociateUnableForVotingException("Associate unable for voting");
     }
-    log.info("Associate [{}] able to vote!", numberCpf);
+    log.debug("Associate [{}] able to vote!", numberCpf);
   }
 }
