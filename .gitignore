@@ -5,6 +5,7 @@ target/
 !**/src/test/**
 .logs
 cache
+logs
 
 ### STS ###
 .apt_generated
