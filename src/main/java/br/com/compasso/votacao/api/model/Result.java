@@ -1,6 +1,7 @@
 package br.com.compasso.votacao.api.model;
 
 import br.com.compasso.votacao.api.enums.OptionVotation;
+import java.io.Serializable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -18,7 +19,9 @@ import org.hibernate.annotations.Type;
 @NoArgsConstructor
 @Entity
 @Table(name = "Resultado")
-public class Result {
+public class Result implements Serializable {
+  
+  private static final long serialVersionUID = 1L;
   
   /**
    * Constructor to groupBy JPA

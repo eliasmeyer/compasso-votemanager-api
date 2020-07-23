@@ -1,6 +1,7 @@
 package br.com.compasso.votacao.api.model;
 
 import br.com.compasso.votacao.api.enums.StatusSession;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -27,7 +28,9 @@ import org.springframework.data.annotation.CreatedDate;
 @Cacheable
 @Cache(region = "sessionCache", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "Sessao")
-public class Session {
+public class Session implements Serializable {
+  
+  private static final long serialVersionUID = 1L;
   
   @Id
   private Long id;
