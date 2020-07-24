@@ -1,10 +1,41 @@
-version: "3.5"
-
+version: "3.7"
+networks:
+  backend:
+    name: app
+    driver: bridge
+volumes:
+  postgres-volume:
+  rabbitmq-volume:
+  app-volume:
 services:
+  # App backend service
+  app:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    ports:
+      - 8080:8080
+    container_name: compasso-votemanager-api-app
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compasso
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_RABBIT_HOST=rabbit
+      - SPRING_RABBIT_PORT=5672
+      - SPRING_RABBIT_USERNAME=compasso
+      - SPRING_RABBIT_PASSWORD=compasso
+    volumes:
+      - app-volume:/compasso-votemanager-api-app/logs
+    networks:
+      - backend
+    depends_on:
+      - db
+      - rabbit
+    restart: on-failure
   #PostgreSQL
   db:
     image: postgres:12.1
-    hostname: compasso_db
+    container_name: postgres-db
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
@@ -13,9 +44,17 @@ services:
       - 5432:5432
     volumes:
       - postgres-volume:/var/lib/postgresql/data
+    networks:
+      - backend
+    healthcheck:
+      test: pg_isready -U postgres
+      interval: 2s
+      timeout: 10s
+      retries: 5
   #RabbitMQ
   rabbit:
     image: rabbitmq:3.8.5-management-alpine
+    container_name: rabbit-mq
     hostname: compasso_mq
     environment:
       - RABBITMQ_DEFAULT_USER=compasso
@@ -25,9 +64,10 @@ services:
       - 15672:15672
     volumes:
       - rabbitmq-volume:/var/lib/rabbitmq:rw
-
-volumes:
-  postgres-volume:
-  rabbitmq-volume:
-
-
+    networks:
+      - backend
+    healthcheck:
+      test: /opt/rabbitmq/sbin/rabbitmqctl status
+      interval: 2s
+      timeout: 10s
+      retries: 5
