@@ -214,6 +214,9 @@
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
           <skipTests>true</skipTests>
+          <excludes>
+            <exclude>**/*IT.java</exclude>
+          </excludes>
         </configuration>
         <executions>
           <execution>
@@ -230,18 +233,20 @@
             <phase>test</phase>
           </execution>
           <execution>
-            <configuration>
-              <includes>
-                <include>**/*IT.*</include>
-                <include>**/*Tests.*</include>
-              </includes>
-              <skipTests>false</skipTests>
-            </configuration>
+            <id>integration-tests</id>
+            <phase>integration-test</phase>
             <goals>
               <goal>test</goal>
             </goals>
-            <id>integration-tests</id>
-            <phase>integration-test</phase>
+            <configuration>
+              <excludes>
+                <exclude>none</exclude>
+              </excludes>
+              <includes>
+                <include>**/*IT.*</include>
+              </includes>
+              <skipTests>false</skipTests>
+            </configuration>
           </execution>
         </executions>
       </plugin>
