@@ -212,41 +212,31 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <skipTests>true</skipTests>
-          <excludes>
-            <exclude>**/*IT.java</exclude>
-          </excludes>
-        </configuration>
         <executions>
           <execution>
             <configuration>
               <includes>
                 <include>**/*Test.java</include>
               </includes>
-              <skipTests>false</skipTests>
             </configuration>
-            <goals>
-              <goal>test</goal>
-            </goals>
-            <id>unit-tests</id>
-            <phase>test</phase>
           </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <version>2.22.2</version>
+        <executions>
           <execution>
-            <id>integration-tests</id>
-            <phase>integration-test</phase>
-            <goals>
-              <goal>test</goal>
-            </goals>
             <configuration>
-              <excludes>
-                <exclude>none</exclude>
-              </excludes>
               <includes>
-                <include>**/*IT.*</include>
+                <include>**/*IT.java</include>
               </includes>
-              <skipTests>false</skipTests>
             </configuration>
+            <goals>
+              <goal>integration-test</goal>
+              <goal>verify</goal>
+            </goals>
           </execution>
         </executions>
       </plugin>
