@@ -66,6 +66,13 @@ public class TopicService {
   }
   
   @Transactional(readOnly = true)
+  public Optional<Topic> findOneWithResultById(Long id) {
+    Objects.requireNonNull(id);
+    log.debug("Find Topic by id [{}]", id);
+    return topicRepository.findOneWithResultById(id);
+  }
+  
+  @Transactional(readOnly = true)
   public Optional<Topic> findById(Long id) {
     Objects.requireNonNull(id);
     log.debug("Find Topic by id [{}]", id);
@@ -81,14 +88,14 @@ public class TopicService {
           log.error("Topic id [{}] not found", id);
           return new DataNotFoundException("Topic not found on " + id);
         });
-  
+    
     //Check if session is registered 
     Optional<Session> session = sessionService.findById(id);
     if (session.isPresent()) {
       log.error("Topic id [{}] with existing session", id);
       throw new TopicWithExistingSessionException("Topic with Session already registered");
     }
-  
+    
     topicRepository.delete(topic);
     log.info("Topic id [{}] deleted successfully", id);
   }
