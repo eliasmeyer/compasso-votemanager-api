@@ -1,39 +1,31 @@
 version: "3.7"
-networks:
-  backend:
-    name: app
-    driver: bridge
-volumes:
-  postgres-volume:
-  rabbitmq-volume:
-  app-volume:
 services:
   # App backend service
-  app:
+  compasso-votemanager-app:
     build:
-      context: ./
       dockerfile: ./Dockerfile
+      context: .
+    restart: always
     ports:
       - 8080:8080
-    container_name: compasso-votemanager-api-app
+    container_name: compasso-votemanager-app
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/compasso
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database-postgres:5432/compasso
       - SPRING_DATASOURCE_USERNAME=postgres
       - SPRING_DATASOURCE_PASSWORD=postgres
-      - SPRING_RABBIT_HOST=rabbit
+      - SPRING_RABBIT_HOST=rabbitmq
       - SPRING_RABBIT_PORT=5672
       - SPRING_RABBIT_USERNAME=compasso
       - SPRING_RABBIT_PASSWORD=compasso
     volumes:
-      - app-volume:/compasso-votemanager-api-app/logs
+      - votemanager-app-volume:/compasso-votemanager-api-app
     networks:
       - backend
     depends_on:
       - db
       - rabbit
-    restart: on-failure
   #PostgreSQL
-  db:
+  database-postgres:
     image: postgres:12.1
     container_name: postgres-db
     environment:
@@ -42,20 +34,15 @@ services:
       - POSTGRES_DB=compasso
     ports:
       - 5432:5432
-    volumes:
-      - postgres-volume:/var/lib/postgresql/data
     networks:
       - backend
-    healthcheck:
-      test: pg_isready -U postgres
-      interval: 2s
-      timeout: 10s
-      retries: 5
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+    restart: always
   #RabbitMQ
-  rabbit:
+  rabbitmq:
     image: rabbitmq:3.8.5-management-alpine
     container_name: rabbit-mq
-    hostname: compasso_mq
     environment:
       - RABBITMQ_DEFAULT_USER=compasso
       - RABBITMQ_DEFAULT_PASS=compasso
@@ -66,8 +53,11 @@ services:
       - rabbitmq-volume:/var/lib/rabbitmq:rw
     networks:
       - backend
-    healthcheck:
-      test: /opt/rabbitmq/sbin/rabbitmqctl status
-      interval: 2s
-      timeout: 10s
-      retries: 5
+    restart: always
+volumes:
+  postgres-volume:
+  rabbitmq-volume:
+  votemanager-app-volume:
+networks:
+  backend:
+    driver: bridge
