@@ -53,7 +53,7 @@ public class TopicController {
   @GetMapping("/{id}")
   public TopicResponse findById(@PathVariable("id") @Positive(message = "id is invalid") Long id) {
     log.debug("Receiving request with id [{}]", id);
-    return topicMapper.from(topicService.findById(id)
+    return topicMapper.from(topicService.findOneWithResultById(id)
         .orElseThrow(() -> new DataNotFoundException("Topic not found on " + id)));
   }
   
