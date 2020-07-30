@@ -8,6 +8,16 @@ O presente código visa atender os requisitos do desafio técnico para o process
 
 ## Configuração da aplicação:
 * Spring Boot 2.3.0
+    * Spring Data
+    * Spring Cloud Stream
 * PostgreSQL 12.1
-* Maven
+* RabbitMQ 3.8.5
 * Springdoc 1.4.3
+* Maven
+
+Acesse a aplicação via [Heroku](http://eliasmeyer-compasso.herokuapp.com/compasso/swagger-ui/index.html?configUrl=/compasso/v3/api-docs/swagger-config)
+
+## Bando de Dados:
+![MER](https://drive.google.com/uc?export=view&id=1sIdEUNJqxTtZIiGO0FUAyVnzebhLBWCF)
+
+
