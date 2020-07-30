@@ -1,9 +1,9 @@
 package br.com.compasso.votacao.api.controller;
 
-import static br.com.compasso.votacao.api.helper.HelperTest.createTopic;
-import static br.com.compasso.votacao.api.helper.HelperTest.createTopicRequest;
-import static br.com.compasso.votacao.api.helper.HelperTest.ignoreFields;
-import static br.com.compasso.votacao.api.helper.HelperTest.responseBody;
+import static br.com.compasso.votacao.api.helper.TestHelper.createTopic;
+import static br.com.compasso.votacao.api.helper.TestHelper.createTopicRequest;
+import static br.com.compasso.votacao.api.helper.TestHelper.ignoreFields;
+import static br.com.compasso.votacao.api.helper.TestHelper.responseBody;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -92,7 +92,7 @@ class TopicControllerTest {
   void testFindByIdSuccessfully() throws Exception {
     Topic topic = createTopic(1L, "Pauta IT #1", "Description IT #1");
     TopicResponse expectedResponse = topicMapper.from(topic);
-    given(topicService.findById(1L)).willReturn(Optional.of(topic));
+    given(topicService.findOneWithResultById(1L)).willReturn(Optional.of(topic));
     
     MvcResult mvcResult = mockMvc.perform(get("/topics/{id}", 1)
         .contentType(MediaType.APPLICATION_JSON))
@@ -107,8 +107,8 @@ class TopicControllerTest {
     assertThat(actualJsonResult)
         .isEqualToIgnoringWhitespace(
             objectMapper.writeValueAsString(expectedResponse));
-    
-    then(topicService).should().findById(1L);
+  
+    then(topicService).should().findOneWithResultById(1L);
   }
   
   @Test

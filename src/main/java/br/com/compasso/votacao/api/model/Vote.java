@@ -1,6 +1,7 @@
 package br.com.compasso.votacao.api.model;
 
 import br.com.compasso.votacao.api.enums.OptionVotation;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -27,7 +28,9 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "Voto")
-public class Vote {
+public class Vote implements Serializable {
+  
+  private static final long serialVersionUID = 1L;
   
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "vote_generator")

@@ -1,6 +1,6 @@
 package br.com.compasso.votacao.api.repository;
 
-import static br.com.compasso.votacao.api.helper.HelperTest.createTopic;
+import static br.com.compasso.votacao.api.helper.TestHelper.createTopic;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import br.com.compasso.votacao.api.config.jpa.JpaConfig;

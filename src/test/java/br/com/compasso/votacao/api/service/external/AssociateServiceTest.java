@@ -2,111 +2,130 @@ package br.com.compasso.votacao.api.service.external;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
-import static org.mockito.BDDMockito.willThrow;
 
 import br.com.compasso.votacao.api.enums.StatusToVote;
 import br.com.compasso.votacao.api.exception.ExternalServiceUnavailableException;
 import br.com.compasso.votacao.api.exception.InvalidCpfNumberException;
+import io.netty.channel.ChannelOption;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+import okhttp3.mockwebserver.MockResponse;
+import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestTemplate;
+import org.springframework.http.client.reactive.ClientHttpConnector;
+import org.springframework.http.client.reactive.ReactorClientHttpConnector;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.testcontainers.shaded.com.fasterxml.jackson.core.JsonProcessingException;
+import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
+import reactor.netty.http.client.HttpClient;
 
-@ExtendWith(MockitoExtension.class)
 class AssociateServiceTest {
   
-  @Mock
-  private RestTemplate restTemplate;
-  @InjectMocks
+  final ObjectMapper objectMapper = new ObjectMapper();
+  private MockWebServer mockWebServer;
   private AssociateService associateService;
-  private static final String URI_REST = "https://user-info.herokuapp.com/users/{cpf}";
   
   @BeforeEach
-  public void setUp() {
-    ReflectionTestUtils.setField(associateService, "URI_REST", URI_REST);
+  public void setup() throws IOException {
+    this.mockWebServer = new MockWebServer();
+    this.mockWebServer.start();
+    HttpClient httpClient = HttpClient.create()
+        .tcpConfiguration(tcpClient -> {
+          tcpClient = tcpClient.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1);
+          return tcpClient;
+        })
+        .wiretap(true);
+    ClientHttpConnector connector = new ReactorClientHttpConnector(httpClient);
+    WebClient webClient = WebClient.builder()
+        .clientConnector(connector)
+        .baseUrl(mockWebServer.url("/").toString()).build();
+    this.associateService = new AssociateService(webClient);
   }
   
   @Test
-  @DisplayName("Call External API Successfully")
-  void testShouldCallAPISuccessfully() {
-    AssociateResponse expected = new AssociateResponse(StatusToVote.ABLE_TO_VOTE.toString());
-    given(restTemplate.getForObject(URI_REST, AssociateResponse.class, "12345678901"))
-        .willReturn(expected);
+  void testShouldCallAPISuccessfully() throws JsonProcessingException {
+    //given
+    AssociateResponse mockAssociate = new AssociateResponse(StatusToVote.ABLE_TO_VOTE.toString());
+    MockResponse mockResponse = new MockResponse()
+        .addHeader("Content-Type", "application/json")
+        .setBody(objectMapper.writeValueAsString(mockAssociate))
+        .setResponseCode(200);
     
+    mockWebServer.enqueue(mockResponse);
+    //when
     AssociateResponse actual = associateService.isAbleToVote("12345678901");
     
+    //then
     assertThat(actual).isNotNull();
-    then(restTemplate).should()
-        .getForObject(eq(URI_REST), eq(AssociateResponse.class), eq("12345678901"));
+    assertThat(actual.getStatus()).isNotNull();
   }
   
   @Test
-  @DisplayName("API External with Response Empty")
-  void testShouldThrowErrorResponseNull() {
+  void testShouldCallAPIWithErrorHttp404() throws JsonProcessingException {
+    //given
+    MockResponse mockResponse = new MockResponse()
+        .addHeader("Content-Type", "application/json")
+        .setResponseCode(404);
     
-    given(restTemplate.getForObject(URI_REST, AssociateResponse.class, "12345678901"))
-        .willReturn(null);
+    mockWebServer.enqueue(mockResponse);
+    //when
+    Throwable throwable = catchThrowable(
+        () -> associateService.isAbleToVote("12345678901"));
     
-    Throwable throwable = catchThrowable(() -> associateService.isAbleToVote("12345678901"));
-    
-    assertThat(throwable)
-        .isInstanceOf(ExternalServiceUnavailableException.class);
-  }
-  
-  @Test
-  @DisplayName("Call External with Cpf wrong")
-  void testShouldCallAPIWithCpfWrong() {
-    willThrow(new InvalidCpfNumberException("Error"))
-        .given(restTemplate).getForObject(URI_REST, AssociateResponse.class, "99999999999");
-  
-    Throwable throwable = catchThrowable(() -> associateService.isAbleToVote("99999999999"));
-  
+    //then
     assertThat(throwable)
         .isInstanceOf(InvalidCpfNumberException.class);
   }
   
   @Test
-  @DisplayName("External API has Error Response Null")
-  void testShouldThrowErrorAPIHasError() {
-    given(restTemplate.getForObject(URI_REST, AssociateResponse.class, "99999999999"))
-        .willReturn(null);
+  void testShouldCallAPIWithErrorHttp409() {
+    //given
+    MockResponse mockResponse = new MockResponse()
+        .addHeader("Content-Type", "application/json")
+        .setResponseCode(409);
     
-    Throwable throwable = catchThrowable(() -> associateService.isAbleToVote("99999999999"));
+    mockWebServer.enqueue(mockResponse);
+    //when
+    Throwable throwable = catchThrowable(
+        () -> associateService.isAbleToVote("12345678901"));
     
+    //then
     assertThat(throwable)
         .isInstanceOf(ExternalServiceUnavailableException.class);
   }
   
   @Test
-  @DisplayName("External API has Error HttpClient 404")
-  void testShouldThrowErrorAPIHasErrorHttpClient404() {
-    willThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND))
-        .given(restTemplate).getForObject(URI_REST, AssociateResponse.class, "99999999999");
+  void testShouldCallAPIWithErrorHttp500() {
+    //given
+    MockResponse mockResponse = new MockResponse()
+        .addHeader("Content-Type", "application/json")
+        .setResponseCode(500);
+    mockWebServer.enqueue(mockResponse);
     
-    Throwable throwable = catchThrowable(() -> associateService.isAbleToVote("99999999999"));
+    //when
+    Throwable throwable = catchThrowable(
+        () -> associateService.isAbleToVote("12345678901"));
     
+    //then
     assertThat(throwable)
-        .isInstanceOf(InvalidCpfNumberException.class);
+        .isInstanceOf(ExternalServiceUnavailableException.class);
   }
   
   @Test
-  @DisplayName("External API has Error HttpClient 500")
-  void testShouldThrowErrorAPIHasErrorHttpClient500() {
-    willThrow(new HttpClientErrorException(HttpStatus.INTERNAL_SERVER_ERROR))
-        .given(restTemplate).getForObject(URI_REST, AssociateResponse.class, "99999999999");
+  void testShouldCallAPIWithErrorConnectionTimeout() {
+    //given
+    MockResponse mockResponse = new MockResponse()
+        .addHeader("Content-Type", "application/json")
+        .setBodyDelay(3L, TimeUnit.MILLISECONDS)
+        .setResponseCode(500);
+    mockWebServer.enqueue(mockResponse);
     
-    Throwable throwable = catchThrowable(() -> associateService.isAbleToVote("99999999999"));
+    //when
+    Throwable throwable = catchThrowable(
+        () -> associateService.isAbleToVote("12345678901"));
     
+    //then
     assertThat(throwable)
         .isInstanceOf(ExternalServiceUnavailableException.class);
   }

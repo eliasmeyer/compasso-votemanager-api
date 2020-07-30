@@ -1,0 +1,63 @@
+version: "3.7"
+services:
+  # App backend service
+  compasso-votemanager-app:
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    restart: always
+    ports:
+      - 8080:8080
+    container_name: compasso-votemanager-app
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://database-postgres:5432/compasso
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_RABBIT_HOST=rabbitmq
+      - SPRING_RABBIT_PORT=5672
+      - SPRING_RABBIT_USERNAME=compasso
+      - SPRING_RABBIT_PASSWORD=compasso
+    volumes:
+      - votemanager-app-volume:/compasso-votemanager-api-app
+    networks:
+      - backend
+    depends_on:
+      - db
+      - rabbit
+  #PostgreSQL
+  database-postgres:
+    image: postgres:12.1
+    container_name: postgres-db
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=compasso
+    ports:
+      - 5432:5432
+    networks:
+      - backend
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+    restart: always
+  #RabbitMQ
+  rabbitmq:
+    image: rabbitmq:3.8.5-management-alpine
+    container_name: rabbit-mq
+    environment:
+      - RABBITMQ_DEFAULT_USER=compasso
+      - RABBITMQ_DEFAULT_PASS=compasso
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq-volume:/var/lib/rabbitmq:rw
+    networks:
+      - backend
+    restart: always
+volumes:
+  postgres-volume:
+  rabbitmq-volume:
+  votemanager-app-volume:
+networks:
+  backend:
+    driver: bridge

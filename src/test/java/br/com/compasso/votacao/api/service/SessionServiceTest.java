@@ -1,5 +1,7 @@
 package br.com.compasso.votacao.api.service;
 
+import static br.com.compasso.votacao.api.helper.TestHelper.createSession;
+import static br.com.compasso.votacao.api.helper.TestHelper.createTopic;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.ArgumentMatchers.any;
@@ -11,18 +13,18 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.BDDMockito.willDoNothing;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 
 import br.com.compasso.votacao.api.enums.OptionVotation;
 import br.com.compasso.votacao.api.enums.StatusSession;
 import br.com.compasso.votacao.api.exception.DataNotFoundException;
-import br.com.compasso.votacao.api.helper.HelperTest;
+import br.com.compasso.votacao.api.exception.TopicWithExistingSessionException;
+import br.com.compasso.votacao.api.helper.TestHelper;
 import br.com.compasso.votacao.api.model.Session;
 import br.com.compasso.votacao.api.model.Topic;
-import br.com.compasso.votacao.api.repository.SessionRepository;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -38,8 +40,6 @@ class SessionServiceTest {
   private TopicService topicService;
   @Mock
   private ManagerSessionService managerSessionService;
-  @Mock
-  private SessionRepository sessionRepository;
   @InjectMocks
   private SessionService sessionService;
   
@@ -49,14 +49,14 @@ class SessionServiceTest {
     @Test
     @DisplayName("Find Session by id")
     void testShouldFindByIdSuccessfully() {
-      Session expected = HelperTest.createSession(1L, 1L);
-      given(sessionRepository.findById(1L)).willReturn(Optional.of(expected));
-      
+      Session expected = TestHelper.createSession(1L, 1L);
+      given(managerSessionService.findById(1L)).willReturn(Optional.of(expected));
+  
       Session actual = sessionService.findById(1L).get();
-      
+  
       assertThat(actual).isNotNull();
       assertThat(actual.getId()).isEqualTo(expected.getId());
-      then(sessionRepository).should().findById(1L);
+      then(managerSessionService).should().findById(1L);
     }
     
     @Test
@@ -64,18 +64,18 @@ class SessionServiceTest {
     void testShouldFindAllSuccessfully() {
       //given
       List<Session> results = new ArrayList<>(3);
-      results.add(HelperTest.createSession(1L, 1L));
-      results.add(HelperTest.createSession(2L, 2L));
-      results.add(HelperTest.createSession(3L, 3L));
-      given(sessionRepository.findAll()).willReturn(results);
-      
+      results.add(TestHelper.createSession(1L, 1L));
+      results.add(TestHelper.createSession(2L, 2L));
+      results.add(TestHelper.createSession(3L, 3L));
+      given(managerSessionService.findAll()).willReturn(results);
+  
       //when
       List<Session> actual = sessionService.findAll();
-      
+  
       //then
       assertThat(actual).isNotNull().isNotEmpty();
       assertThat(actual).extracting(Session::getStatusSession).containsOnly(StatusSession.ABERTO);
-      then(sessionRepository).should().findAll();
+      then(managerSessionService).should().findAll();
     }
   }
   
@@ -86,18 +86,18 @@ class SessionServiceTest {
     @DisplayName("Session open successfully")
     void testShouldOpenSuccessfully() {
       //given
-      Topic topic = HelperTest.createTopic(1L, "Title #1", "Description #1");
-      Session session = HelperTest.createSession(1L, 1L);
+      Topic topic = createTopic(1L, "Title #1", "Description #1");
+      Session session = TestHelper.createSession(1L, 1L);
     
       given(topicService.findById(1L))
           .willReturn(Optional.of(topic));
     
       given(managerSessionService.doOpen(topic, 1L))
           .willReturn(session);
-      
+    
       //when
       Session actual = sessionService.open(1L, 1L);
-      
+    
       //then
       assertThat(actual).isNotNull();
       then(topicService).should(times(1)).findById(1L);
@@ -106,7 +106,7 @@ class SessionServiceTest {
   
     @Test
     @DisplayName("Can't open with topic id not found")
-    void testShouldntOpenWithTopicIdNotFound() {
+    void testShouldNotOpenWithTopicIdNotFound() {
       //given
       given(topicService.findById(eq(1L))).willReturn(Optional.empty());
     
@@ -120,26 +120,48 @@ class SessionServiceTest {
           .should(never())
           .doOpen(any(Topic.class), anyLong());
     }
+  
+    @Test
+    @DisplayName("Can't open with session already registered")
+    void testShouldNotOpenSessionAlreadyRegistered() throws DataNotFoundException {
+      //given
+      Topic topic = createTopic(1L, "Title 1#", "Description #1");
+      Session session = createSession(1L, 1L);
+      given(topicService.findById(1L)).willReturn(Optional.of(topic));
+      given(managerSessionService.findById(1L)).willReturn(Optional.of(session));
     
+      //when
+      assertThatExceptionOfType(TopicWithExistingSessionException.class)
+          .isThrownBy(() -> {
+            sessionService.open(1L, 1L);
+          });
+    
+      //then
+      then(managerSessionService)
+          .should(never())
+          .doOpen(any(Topic.class), anyLong());
+    }
+  
     @Test
     @DisplayName("Vote saved successfully")
     void testShouldVoteSuccessfully() throws Exception {
       //given
-      Session session = HelperTest.createSession(1L, 1L);
-      given(sessionRepository.findById(anyLong())).willReturn(Optional.of(session));
+      Session session = TestHelper.createSession(1L, 1L);
+      given(managerSessionService.findById(anyLong())).willReturn(Optional.of(session));
       willDoNothing().given(managerSessionService)
           .onVote(session, "12345678901", OptionVotation.SIM);
-      
+    
       //when
       sessionService.vote(session.getId(), "12345678901", OptionVotation.SIM);
-      
+    
       //then
-      verify(managerSessionService).onVote(session, "12345678901", OptionVotation.SIM);
+      then(managerSessionService).should(times(1))
+          .onVote(session, "12345678901", OptionVotation.SIM);
     }
   
     @Test
     @DisplayName("Can't vote with session id not found")
-    void testShouldntVoteWithSessionIdNotFound() throws Exception {
+    void testShouldNotVoteWithSessionIdNotFound() throws Exception {
       //given
       given(sessionService.findById(anyLong())).willReturn(Optional.empty());
     
@@ -156,7 +178,7 @@ class SessionServiceTest {
   
     @Test
     @DisplayName("Close session successfully")
-    void testShouldCloseSuccessfully() {
+    void testShouldCloseSuccessfully() throws ExecutionException, InterruptedException {
       //given
       willDoNothing().given(managerSessionService).onClose();
     
@@ -164,7 +186,7 @@ class SessionServiceTest {
       sessionService.close();
     
       //then
-      then(managerSessionService).should().onClose();
+      then(managerSessionService).should(times(1)).onClose();
     }
   }
 }

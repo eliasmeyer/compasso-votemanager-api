@@ -2,7 +2,6 @@ package br.com.compasso.votacao.api.service;
 
 import br.com.compasso.votacao.api.enums.OptionVotation;
 import br.com.compasso.votacao.api.exception.DataNotFoundException;
-import br.com.compasso.votacao.api.exception.VoteAlreadyRegisteredException;
 import br.com.compasso.votacao.api.model.Result;
 import br.com.compasso.votacao.api.model.Session;
 import br.com.compasso.votacao.api.model.Vote;
@@ -59,18 +58,18 @@ public class VoteService {
     });
   }
   
+  public Optional<Vote> findBySessionAndCpfNumber(Session session, String numberCpf) {
+    Objects.requireNonNull(session);
+    Objects.requireNonNull(numberCpf);
+    return voteRepository.findBySessionAndCpfNumber(session, numberCpf);
+  }
+  
   @Transactional
-  public Vote register(Session session, String numberCpf, OptionVotation choice)
-      throws VoteAlreadyRegisteredException {
+  public Vote register(Session session, String numberCpf, OptionVotation choice) {
     Objects.requireNonNull(session);
     Objects.requireNonNull(numberCpf);
     Objects.requireNonNull(choice);
     
-    Optional<Vote> vote = voteRepository.findBySessionAndCpfNumber(session, numberCpf);
-    if (vote.isPresent()) {
-      log.error("Vote Session id [{}], cpf [{}] already registered previously !");
-      throw new VoteAlreadyRegisteredException("Vote already computed on session!");
-    }
     Vote voteNew = new Vote();
     voteNew.setSession(session);
     voteNew.setCpfNumber(numberCpf);

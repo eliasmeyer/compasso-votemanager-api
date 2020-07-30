@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.jdbc.Sql;
 
@@ -37,23 +39,26 @@ public class SessionRepositoryIT {
     topic.setTitle("Topic test - Query Sessions");
     topic.setDescription("Query findAllThatPrecedesDateTimeClosingAndStatusEqualOpen");
     topic = topicRepository.save(topic);
-    
+  
     Session session = new Session();
     LocalDateTime localDateTime = LocalDateTime.now();
     session.setTopic(topic);
     session.setDateTimeOpening(localDateTime.minusMinutes(3L));
     session.setDateTimeClosing(localDateTime.minusMinutes(1L));
     session.setStatusSession(StatusSession.ABERTO);
-    
+  
     Session inserted = sessionRepository.save(session);
-    
+  
+    PageRequest pageRequest = PageRequest.of(0, 5);
+  
     //when
-    List<Session> founds = sessionRepository
-        .findAllThatPrecedesDateTimeClosingAndStatusEqualOpen(localDateTime);
-    
+    Slice<Session> founds = sessionRepository
+        .findAllThatPrecedesDateTimeClosingAndStatusEqualOpen(localDateTime, pageRequest);
+  
     //then
-    assertThat(founds).hasAtLeastOneElementOfType(Session.class);
-    for (Session currentSession : founds) {
+    assertThat(founds.getContent()).hasAtLeastOneElementOfType(Session.class);
+    assertThat(founds.hasContent()).isTrue();
+    for (Session currentSession : founds.getContent()) {
       assertThat(currentSession.getDateTimeOpening())
           .isEqualTo(inserted.getDateTimeOpening());
       assertThat(currentSession.getStatusSession()).isEqualTo(StatusSession.ABERTO);

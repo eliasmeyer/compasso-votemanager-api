@@ -19,11 +19,14 @@ public class VerifierOnSession {
   @Autowired
   @Qualifier("verifierSessionExpired")
   private VerifierCondition<Session> verifierSessionExpired;
-  
+  @Autowired
+  @Qualifier("verifierVoteRegistered")
+  private VerifierCondition<VoteVerifierBean> verifierVoteRegistered;
   
   public void validate(Session session, String cpfNumber) {
-    log.debug("Verifying cpf [{}] on session [{}]", cpfNumber, session);
+    log.debug("Verifying cpf [{}] on session id [{}]", cpfNumber, session.getId());
     verifyIfAssociateIsAble.isOk(cpfNumber);
+    verifierVoteRegistered.isOk(new VoteVerifierBean(session, cpfNumber));
     verifierSessionIsOpen.isOk(session);
     verifierSessionExpired.isOk(session);
     log.info("Associate vote [{}] verify with successfully on session id [{}]", cpfNumber,

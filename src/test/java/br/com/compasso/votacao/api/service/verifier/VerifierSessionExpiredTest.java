@@ -5,7 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.fail;
 
 import br.com.compasso.votacao.api.exception.VotingTimeSessionExpiredException;
-import br.com.compasso.votacao.api.helper.HelperTest;
+import br.com.compasso.votacao.api.helper.TestHelper;
 import br.com.compasso.votacao.api.model.Session;
 import java.time.LocalDateTime;
 import java.util.stream.Stream;
@@ -22,7 +22,7 @@ class VerifierSessionExpiredTest {
   @Test
   @DisplayName("Session not expired")
   void testShouldOk() {
-    Session session = HelperTest.createSession(1L, 1L);
+    Session session = TestHelper.createSession(1L, 1L);
     LocalDateTime currentDateTime = LocalDateTime.now().plusSeconds(3l);
     
     try {
@@ -39,7 +39,7 @@ class VerifierSessionExpiredTest {
   @DisplayName("Session expired")
   @MethodSource("providesDateTimeForExpired")
   void testShouldntOk(LocalDateTime dateTimeOpen, LocalDateTime dateTimeClose) {
-    Session session = HelperTest.createSession(1L, 1L);
+    Session session = TestHelper.createSession(1L, 1L);
     LocalDateTime currentDateTime = LocalDateTime.now();
     session.setDateTimeOpening(dateTimeOpen);
     session.setDateTimeClosing(dateTimeClose);

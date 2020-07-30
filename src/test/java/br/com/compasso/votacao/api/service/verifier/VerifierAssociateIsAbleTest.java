@@ -39,11 +39,11 @@ class VerifierAssociateIsAbleTest {
   
   @Test
   @DisplayName("Associate is UNABLE_TO_VOTE")
-  void testShouldntBeOk() {
+  void testShouldNotBeOk() {
     //given
     AssociateResponse associateResponse = new AssociateResponse("UNABLE_TO_VOTE");
     given(associateService.isAbleToVote(anyString())).willReturn(associateResponse);
-    
+  
     assertThatExceptionOfType(AssociateUnableForVotingException.class)
         .isThrownBy(() -> {
           verifierAssociateIsAble.isOk("12345678901");

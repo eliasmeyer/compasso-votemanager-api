@@ -16,6 +16,6 @@ class VerifierSessionIsOpen implements VerifierCondition<Session> {
       log.error("Session id [{}] is NOT Open", session.getId());
       throw new VotingTimeSessionExpiredException("Voting Time expired on session!");
     }
-    log.info("Session [{}] is OPEN", session.getId());
+    log.debug("Session [{}] is OPEN", session.getId());
   }
 }

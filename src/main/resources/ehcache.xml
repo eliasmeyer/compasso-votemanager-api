@@ -1,0 +1,26 @@
+<config
+  xmlns='http://www.ehcache.org/v3'
+  xmlns:jcache='http://www.ehcache.org/v3/jsr107'>
+
+  <service>
+    <jcache:defaults enable-management="true" enable-statistics="true"/>
+  </service>
+
+  <persistence directory="./cache"></persistence>
+
+  <cache-template name="default">
+    <expiry>
+      <ttl>70</ttl>
+    </expiry>
+    <resources>
+      <heap>100</heap>
+      <offheap unit="MB">50</offheap>
+    </resources>
+  </cache-template>
+
+  <cache alias="sessionCache" uses-template="default">
+  </cache>
+  <cache alias="topicCache" uses-template="default">
+  </cache>
+
+</config>

@@ -1,8 +1,8 @@
 package br.com.compasso.votacao.api.controller;
 
-import static br.com.compasso.votacao.api.helper.HelperTest.createSession;
-import static br.com.compasso.votacao.api.helper.HelperTest.createVote;
-import static br.com.compasso.votacao.api.helper.HelperTest.responseBody;
+import static br.com.compasso.votacao.api.helper.TestHelper.createSession;
+import static br.com.compasso.votacao.api.helper.TestHelper.createVote;
+import static br.com.compasso.votacao.api.helper.TestHelper.responseBody;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.eq;

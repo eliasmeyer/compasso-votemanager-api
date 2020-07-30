@@ -1,6 +1,8 @@
 package br.com.compasso.votacao.api.model;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -15,6 +17,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -22,8 +26,12 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @NoArgsConstructor
 @Entity
 @EntityListeners(AuditingEntityListener.class)
+@Cacheable
+@Cache(region = "topicCache", usage = CacheConcurrencyStrategy.READ_WRITE)
 @Table(name = "Pauta")
-public class Topic {
+public class Topic implements Serializable {
+  
+  private static final long serialVersionUID = 1L;
   
   @Id
   @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "topic_generator")
