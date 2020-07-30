@@ -92,7 +92,7 @@ class TopicControllerTest {
   void testFindByIdSuccessfully() throws Exception {
     Topic topic = createTopic(1L, "Pauta IT #1", "Description IT #1");
     TopicResponse expectedResponse = topicMapper.from(topic);
-    given(topicService.findById(1L)).willReturn(Optional.of(topic));
+    given(topicService.findOneWithResultById(1L)).willReturn(Optional.of(topic));
     
     MvcResult mvcResult = mockMvc.perform(get("/topics/{id}", 1)
         .contentType(MediaType.APPLICATION_JSON))
@@ -107,8 +107,8 @@ class TopicControllerTest {
     assertThat(actualJsonResult)
         .isEqualToIgnoringWhitespace(
             objectMapper.writeValueAsString(expectedResponse));
-    
-    then(topicService).should().findById(1L);
+  
+    then(topicService).should().findOneWithResultById(1L);
   }
   
   @Test
