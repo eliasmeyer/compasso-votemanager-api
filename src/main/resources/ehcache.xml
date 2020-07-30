@@ -10,11 +10,11 @@
 
   <cache-template name="default">
     <expiry>
-      <ttl>60</ttl>
+      <ttl>70</ttl>
     </expiry>
     <resources>
-      <heap>300</heap>
-      <offheap unit="MB">100</offheap>
+      <heap>100</heap>
+      <offheap unit="MB">50</offheap>
     </resources>
   </cache-template>
 
