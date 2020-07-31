@@ -10,7 +10,7 @@
 
   <cache-template name="default">
     <expiry>
-      <ttl>70</ttl>
+      <ttl>60</ttl>
     </expiry>
     <resources>
       <heap>100</heap>
