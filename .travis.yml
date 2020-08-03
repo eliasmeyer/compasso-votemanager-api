@@ -1,31 +1,40 @@
 os: linux
 dist: xenial
 language: java
-
 jdk:
-  - openjdk8
-
+  - oraclejdk8
 cache:
   directories:
-    - '$HOME/.m2/repository'
-    - '$HOME/.sonar/cache'
-
+    - "$HOME/.m2/repository"
+    - "$HOME/.sonar/cache"
 addons:
   sonarcloud:
-    organization: "eliasmeyer-github"
-
+    organization: eliasmeyer-github
+branches:
+  only:
+    - master
+    - /^.*RELEASE$/
 before_install:
   - chmod +x mvnw
-
 script:
   # the following command line builds the project, runs the tests with coverage and then execute the SonarCloud analysis
   - mvn clean -Dorg.jacoco:jacoco-maven-plugin:prepare-agent install sonar:sonar -Dsonar.projectKey=eliasmeyer_compasso-votemanager-api -Dsonar.login=${SONAR_TOKEN}
-
+before_deploy:
+  - mvn versions:set -DnewVersion=$TRAVIS_TAG
+  - mvn package -Dmaven.test.skip=true
 deploy:
-  provider: heroku
-  api_key: ${HEROKU_TOKEN}
-  app: eliasmeyer-compasso
-  on: master
-  script: skip
-  skip_cleanup: true
-
+  - provider: heroku
+    skip_cleanup: 'true'
+    api_key: ${HEROKU_TOKEN}
+    app: eliasmeyer-compasso
+    on: master
+    script: skip
+  - provider: releases
+    skip_cleanup: 'true'
+    api_key: ${GITHUB_OAUTH_API_KEY}
+    file_glob: true
+    file:
+      - "compasso-votemanager-api/target/*.jar"
+    on:
+      repo: eliasmeyer/compasso-votemanager-api
+      tags: true
