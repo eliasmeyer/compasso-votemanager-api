@@ -13,7 +13,7 @@ import io.swagger.v3.oas.annotations.info.License;
         ,
         contact = @Contact(name = "Elias Meyer", email = "eliasmeyer@gmail.com"),
         license = @License(name = "Apache Licence 2.0", url = " http://www.apache.org/licenses/LICENSE-2.0.txt"),
-        version = "1.0.0-beta"
+        version = "1.0.0.RELEASE"
     )
 )
 
