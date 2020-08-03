@@ -2,7 +2,6 @@
 
 [![Build Status](https://travis-ci.org/eliasmeyer/compasso-votemanager-api.svg?branch=master)](https://travis-ci.org/eliasmeyer/compasso-votemanager-api)
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=eliasmeyer_compasso-votemanager-api&metric=coverage)](https://sonarcloud.io/dashboard?id=eliasmeyer_compasso-votemanager-api)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=eliasmeyer_compasso-votemanager-api&metric=alert_status)](https://sonarcloud.io/dashboard?id=eliasmeyer_compasso-votemanager-api)
 
 [![SonarCloud](https://sonarcloud.io/images/project_badges/sonarcloud-white.svg)](https://sonarcloud.io/dashboard?id=eliasmeyer_compasso-votemanager-api)
 
