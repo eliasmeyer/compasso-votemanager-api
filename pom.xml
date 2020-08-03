@@ -21,6 +21,22 @@
     <url>https://github.com/eliasmeyer/compasso-votemanager-api.git</url>
   </scm>
 
+  <licenses>
+    <license>
+      <name>The Apache Software License, Version 2.0</name>
+      <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <developers>
+    <developer>
+      <id>eliasmeyer</id>
+      <name>Elias Meyer</name>
+      <email>eliasmeyer@gmail.com</email>
+    </developer>
+  </developers>
+
   <properties>
     <spring-cloud.version>Hoxton.SR6</spring-cloud.version>
     <jacoco.maven.version>0.8.5</jacoco.maven.version>
